@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\main.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\BezierCurve.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\NURBSCurve.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\CurveRendering.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\main.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\BezierCurve.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\NURBSCurve.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\CurveRendering.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\Vec3.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\Vec4.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header">
+      <UniqueIdentifier>{4F506FD4-F84A-3FBE-921F-77217EE009B3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{2EF1ADA1-9220-36BF-8CD0-B8A8DA19E4F7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

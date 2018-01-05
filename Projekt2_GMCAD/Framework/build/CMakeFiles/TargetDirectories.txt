@@ -1,0 +1,3 @@
+C:/Users/tolga/Desktop/Projekt2_GMCAD/Framework/build/CMakeFiles/main.dir
+C:/Users/tolga/Desktop/Projekt2_GMCAD/Framework/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/tolga/Desktop/Projekt2_GMCAD/Framework/build/CMakeFiles/ZERO_CHECK.dir
