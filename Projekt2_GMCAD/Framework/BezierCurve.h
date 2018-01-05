@@ -18,6 +18,14 @@ public:
 	// constructor which takes given control points
 	BezierCurve(const std::vector<Vec3f>& controlPoints_, bool isRational = false);
 
+	std::vector<Vec3f> derivateBezier(const float t, std::vector<Vec3f> p);
+
+	const float calculateBlendingFunction(int i , int n, const float t);
+
+	int binomialCoefficient(int i, int n);
+
+	int factorial(int n);
+
 	// evaluate the curve at parameter t with de Casteljau algorithm. Returns both bezier curves seperated at parameter t.
 	std::pair<BezierCurve, BezierCurve> separateCurveAt(const float t);
 

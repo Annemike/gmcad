@@ -1,5 +1,4 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\Microsoft.Common.CurrentVersion.targets(1768,5): warning : The referenced project 'C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\build\ZERO_CHECK.vcxproj' does not exist.
-  Building Custom Rule C:/Users/tolga/Desktop/Projekt2_GMCAD/Framework/CMakeLists.txt
-  CMake is re-running because C:/Users/tolga/Desktop/Projekt2_GMCAD/Framework/build/CMakeFiles/generate.stamp dependency file is missing.
-CUSTOMBUILD : CMake error : The source directory "C:/Users/tolga/Desktop/Projekt2_GMCAD/Framework" does not appear to contain CMakeLists.txt.
-  Specify --help for usage, or press the help button on the CMake GUI.
+﻿  BezierCurve.cpp
+C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\BezierCurve.cpp(115): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\BezierCurve.cpp(117): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+  main.vcxproj -> C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\build\Debug\main.exe

@@ -89,8 +89,10 @@ void createCurves()
 	Vec3f v2 = Vec3f(1.0f, 2.0f, 0.0f);
 	Vec3f v3 = Vec3f(2.5f, 0.0f, 0.0f);
 	
+
 	std::vector<Vec3f> cps = {v1,v2,v3};
 	BezierCurve  curve1(cps);
+	curve1.evaluateCurveAt(0.3f, v1);
 	bezierCurves.push_back(curve1);
 	// ==========================================================================
 	for (auto &b : bezierCurves)
@@ -201,18 +203,23 @@ void keyPressed(unsigned char key, int x, int y)
 	// ==========================================================================
 	case 'i':
 	case 'I':
-		if (evalParameter < 1.0f) {
-			evalParameter += 0.1f;
+		if (evalParameter < 0.99f) {
+			evalParameter += 0.01f;
 			std::cout << evalParameter << std::endl;
+			std::cout << bezierCurves[0].evaluateCurveAt(evalParameter, Vec3f()) << std::endl;
 		}
 		glutPostRedisplay();
 		break;
 	case 'd':
 	case 'D':
-		if (evalParameter >= 0.1f) {
-			evalParameter -= 0.1f;
+	
+		if (evalParameter >= 0.01f) {
+			evalParameter -= 0.01f;
 			std::cout << evalParameter << std::endl;
+			std::cout << bezierCurves[0].evaluateCurveAt(evalParameter, Vec3f())<<std::endl;
 		}
+
+		
 		glutPostRedisplay();
 		break;
 	case 's':
