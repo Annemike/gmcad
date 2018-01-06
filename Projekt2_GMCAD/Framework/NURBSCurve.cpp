@@ -84,11 +84,23 @@ Vec4f NURBSCurve::evaluteDeBoor(const float t, Vec4f& tangent)
 	// =====================================================================================================================================
 	if (t == tempNURBS.getKnotVector().front())
 	{
-		return tempNURBS.getControlPoints().front();
+		Vec4f first = tempNURBS.getControlPoints().front();
+		Vec4f second = tempNURBS.getControlPoints().at(1);
+		tangent.x = first.w * second.x - second.w * first.x;
+		tangent.y = first.w * second.y - second.w * first.y;
+		tangent.z = first.w * second.z - second.w * first.z;
+		tangent.w = first.w * second.w;
+		return first;
 	}
 	if (t == tempNURBS.getKnotVector().back())
 	{
-		return tempNURBS.getControlPoints().back();
+		Vec4f first = tempNURBS.getControlPoints().at(tempNURBS.getControlPoints().size() - 2);
+		Vec4f second = tempNURBS.getControlPoints().back();
+		tangent.x = first.w * second.x - second.w * first.x;
+		tangent.y = first.w * second.y - second.w * first.y;
+		tangent.z = first.w * second.z - second.w * first.z;
+		tangent.w = first.w * second.w;
+		return second;
 	}
 	float  counter = 0;
 	unsigned int k = 0;
@@ -107,10 +119,11 @@ Vec4f NURBSCurve::evaluteDeBoor(const float t, Vec4f& tangent)
 		tempNURBS.insertKnot(t);
 	}
 	point = tempNURBS.getControlPoints().at(k);
-	for (int i = 0; i < tempNURBS.getControlPoints().size(); i++) {
-		std::cout << tempNURBS.getControlPoints()[i] << std::endl;
-
-	}
+	Vec4f previous = tempNURBS.getControlPoints().at(k - 1);
+	tangent.x = previous.w * point.x - point.w * previous.x;
+	tangent.y = previous.w * point.y - point.w * previous.y;
+	tangent.z = previous.w * point.z - point.w * previous.z;
+	tangent.w = previous.w * point.w;
 	// =====================================================================================================================================
 	return point;
 }
@@ -125,8 +138,16 @@ std::pair<std::vector<Vec4f>, std::vector<Vec4f>> NURBSCurve::evaluateCurve(cons
 	// TODO: implement evaluation of the NURBS curve at 'numberSamples' equidistant points
 	// Note: use the evaluteDeBoor(t) function. 
 	// ==========================================================================================================
-
-
+	float begin = knotVector.front();
+	float end = knotVector.back();
+	float dist = end - begin;
+	float step = dist / (numberSamples - 1);
+	Vec4f tangent;
+	for (int i = 0; i < numberSamples; i++)
+	{
+		points.push_back(evaluteDeBoor(begin + i * step, tangent));
+		tangents.push_back(tangent);
+	}
 	// ==========================================================================================================
 
 	return std::make_pair(points, tangents);

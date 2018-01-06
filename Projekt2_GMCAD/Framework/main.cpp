@@ -116,8 +116,13 @@ void createCurves()
 
 	std::vector<float> knots = { 0,0,0,1,1,1 };
 	NURBSCurve curve2(cps2, knots, 2);
-
-	std::cout << curve2.evaluteDeBoor(0.4f, Vec4f()) << std::endl;
+	Vec4f tan;
+	std::cout << curve2.evaluteDeBoor(0.1f, tan) << std::endl << tan << std::endl;
+	std::pair<std::vector<Vec4f>, std::vector<Vec4f>> res = curve2.evaluateCurve(11);
+	for (int i = 0; i < 11; i++)
+	{
+		std::cout << std::get<0>(res)[i] << " tangiert durch " << std::get<1>(res)[i] << std::endl;
+	}
 	nurbsCurves.push_back(curve2);
 	// ==================================================================================
 	for (auto &n : nurbsCurves)
