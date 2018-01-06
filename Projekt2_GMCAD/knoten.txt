@@ -1,0 +1,25 @@
+unsigned int k;
+	bool kFound = false;
+	for (unsigned int i = 0; i < knotVector.size() && !kFound; i++)
+		if (newKnot < knotVector[i])
+		{
+			k = i-1;
+			kFound = true;
+		}
+	std::vector<Vec4f> newControlPoints;
+	newControlPoints.reserve(controlPoints.size() + 1);
+	float alpha, zaehler, nenner;
+	for (unsigned int i = k-degree+1; i <= k; i++)
+	{
+		zaehler = newKnot - knotVector[i];
+		nenner = knotVector[i + degree] - knotVector[i];
+		if (nenner == 0)
+			alpha = 0;
+		else
+			alpha = zaehler / nenner;
+		newControlPoints[i] = controlPoints[i].operator*(alpha).operator+(controlPoints[i - 1].operator*(1 - alpha));
+	}
+	for (unsigned int i = k+1; i <= controlPoints.size(); i++)
+		newControlPoints[i] = controlPoints[i - 1];
+	knotVector.insert(knotVector.begin() + k + 1, newKnot);
+	controlPoints = newControlPoints;
