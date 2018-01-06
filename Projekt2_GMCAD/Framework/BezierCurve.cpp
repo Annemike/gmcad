@@ -13,9 +13,9 @@ BezierCurve::BezierCurve(const std::vector<Vec3f>& controlPoints_, bool isRation
 	, rational(isRational_)
 {
 }
-std::vector<Vec3f> BezierCurve::getBezierCurvePoints()
+std::vector<Vec3f> BezierCurve::getBezierCurvePoints(std::vector<Vec3f> tmpList)
 {
-	std::vector<Vec3f> tmpList;
+	
 
 	for (float t = 0; t <= 1; t += 0.05f) {
 
@@ -42,7 +42,7 @@ std::pair<BezierCurve, BezierCurve> BezierCurve::separateRationalCurveAt(const f
 	for (int i = 0; i < n; i++) {
 		cps1.push_back(getControlPoints()[i]);
 	}
-
+	
 	for (int k = 1; k <= n; k++) {
 		for (int i = 0; i < n - k; i++) {
 			/*
@@ -69,10 +69,11 @@ std::pair<BezierCurve, BezierCurve> BezierCurve::separateRationalCurveAt(const f
 			cps1[i] = temp1.operator+(temp2);
 			*/
 			
-		cps1[i] = (w*cps1[i].operator*(1.0f - t).operator+(w*cps1[i + 1].operator*(t)));
+		cps1[i] = (cps1[i].operator*(1.0f - t).operator+(cps1[i + 1].operator*(t)));
 		}
 		cps2.push_back(cps1[0]);
 	}
+	cps1[0] = w* cps1[0];
 	// ==========================================================================================================
 	BezierCurve curve1(cps1, rational);
 	BezierCurve curve2(cps2, rational);

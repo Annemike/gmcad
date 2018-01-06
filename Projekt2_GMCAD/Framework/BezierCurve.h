@@ -18,7 +18,7 @@ public:
 	// constructor which takes given control points
 	BezierCurve(const std::vector<Vec3f>& controlPoints_, bool isRational = false);
 
-	std::vector<Vec3f> getBezierCurvePoints();
+	std::vector<Vec3f> getBezierCurvePoints(std::vector<Vec3f> tmpList);
 
 	std::pair<BezierCurve, BezierCurve> separateRationalCurveAt(const float t, float w);
 

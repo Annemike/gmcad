@@ -43,9 +43,35 @@ bool NURBSCurve::insertKnot(const float newKnot)
 {
 	// TODO: implement knot insertion with de boor algorithm
 	// =====================================================
-
-
-	// =====================================================
+	 int k;
+	bool kFound = false;
+	for (unsigned int i = 0; i < knotVector.size() && !kFound; i++)
+		if (newKnot < knotVector[i])
+		{
+			k = i - 1;
+			kFound = true;
+			
+		}
+	
+	std::vector<Vec4f> newControlPoints(controlPoints);
+		newControlPoints.push_back(Vec4f(0,0,0,0));
+	float alpha, zaehler, nenner;
+	for (unsigned int i = k - degree + 1; i < k; i++)
+	{
+		zaehler = newKnot - knotVector[i];
+		nenner = knotVector[i + degree] - knotVector[i];
+		if (nenner == 0)
+			alpha = 0;
+		else
+			alpha = zaehler / nenner;
+		newControlPoints[i]=(controlPoints[i] * alpha + controlPoints[i - 1] * (1 - alpha));
+	}
+		
+	for (unsigned int i = k + 1; i <= controlPoints.size(); i++)
+		newControlPoints[i] = controlPoints[i - 1];
+	knotVector.insert(knotVector.begin() + k + 1, newKnot);
+	controlPoints = newControlPoints;
+	
 	return true;
 }
 
@@ -56,9 +82,21 @@ Vec4f NURBSCurve::evaluteDeBoor(const float t, Vec4f& tangent)
 	Vec4f point;
 	// TODO: use insertKnot to evaluate the curve and its tangent. Take care to NOT modify this NURBS curve. Instead use the temporary copy.
 	// =====================================================================================================================================
+	float  counter = 0;
+	for (int i = 0; i < tempNURBS.getKnotVector().size(); i++) {
+		if (tempNURBS.getKnotVector()[i] == t) {
+			counter += 1;
+		}
+	}
+	for (int i = 0; i < tempNURBS.getDegree()-counter+1; i++) {
+		tempNURBS.insertKnot(t);
+		
+	}
+	for (int i = 0; i < tempNURBS.getControlPoints().size(); i++) {
+		std::cout << tempNURBS.getControlPoints()[i] << std::endl;
 
-
-	// =====================================================================================================================================
+	}
+		// =====================================================================================================================================
 	return point;
 }
 

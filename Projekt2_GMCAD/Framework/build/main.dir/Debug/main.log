@@ -1,4 +1,5 @@
-﻿  CurveRendering.cpp
-C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\CurveRendering.cpp(18): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
-C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\CurveRendering.cpp(20): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+﻿  NURBSCurve.cpp
+C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\NURBSCurve.cpp(59): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\NURBSCurve.cpp(86): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\NURBSCurve.cpp(95): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
   main.vcxproj -> C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\build\Debug\main.exe

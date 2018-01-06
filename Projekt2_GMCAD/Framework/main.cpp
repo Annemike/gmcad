@@ -96,11 +96,11 @@ void createCurves()
 
 
 	std::vector<Vec3f> cps = {v1,v2,v3};
-	BezierCurve  curve1(cps);
+	BezierCurve  curve1(cps,true);
 
-	curve1.separateRationalCurveAt(0.5f, 10.0f);
-	bezierCurves.push_back(curve1);
-	//bezierCurves.push_back(curve2);
+
+	
+	//bezierCurves.push_back(curve1);
 	// ==========================================================================
 	for (auto &b : bezierCurves)
 		std::cout << b << std::endl;
@@ -108,7 +108,16 @@ void createCurves()
 	nurbsCurves.clear();
 	// TODO: set values to describe a degree 2 quarter circle in first quadrant, XY-plane
 	// ==================================================================================
+	Vec4f v1n = Vec4f(1.0f, 0.0f, 0.0f, 1.0f);
+	Vec4f v2n = Vec4f(1.0f, 1.0f, 0.0f, 1.0f);
+	Vec4f v3n = Vec4f(0.0f, 1.0f, 0.0f, 2.0f);
 	
+	std::vector<Vec4f> cps2 = { v1n,v2n,v3n};
+
+	std::vector<float> knots = { 0,0,0,1,1,1 };
+	NURBSCurve curve2(cps2, knots, 2);
+	curve2.evaluteDeBoor(0.5f, Vec4f());
+	nurbsCurves.push_back(curve2);
 	// ==================================================================================
 	for (auto &n : nurbsCurves)
 		std::cout << n << std::endl;

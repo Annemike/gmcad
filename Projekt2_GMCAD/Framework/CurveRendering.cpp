@@ -33,14 +33,7 @@ void drawBezier(BezierCurve &bezierCurve, Vec3f color)
 	}
 	glEnd();
 
-	glBegin(GL_POINTS);
-	
-	glColor3fv(&color.x);
-	for (unsigned int i = 0; i < tmpList1.size(); i++) {
-		glVertex3fv(&tmpList1[i].x);
-	}
-	
-	glEnd();
+
 	// ===============================================================================
 }
 void drawBezierCtrlPolygon(const BezierCurve &bezierCurve, Vec3f color)
@@ -111,7 +104,21 @@ void drawNURBSCtrlPolygon(const NURBSCurve &nurbsCurve, Vec3f color)
 	// NOT homogenized 
 	// NURBS' control polygon (e.g. with GL_LINE_STRIP)
 	// =========================================================================================================
-	
+	glBegin(GL_LINE_STRIP);
+	glColor3fv(&color.x);
+
+	for (unsigned int i = 0; i < nurbsCurve.getControlPoints().size(); i++) {
+		glVertex3f(nurbsCurve.getControlPoints()[i].x, nurbsCurve.getControlPoints()[i].y, nurbsCurve.getControlPoints()[i].w);
+	}
+	glEnd();
+
+	glBegin(GL_POINTS);
+	glColor3fv(&color.y);
+
+	for (unsigned int i = 0; i < nurbsCurve.getControlPoints().size(); i++) {
+		glVertex3f(nurbsCurve.getControlPoints()[i].x, nurbsCurve.getControlPoints()[i].y, nurbsCurve.getControlPoints()[i].w);
+	}
+	glEnd();
 	// =========================================================================================================
 }
 void drawNURBSCtrlPolygon_H(const NURBSCurve &nurbsCurve, Vec3f color)
@@ -120,7 +127,21 @@ void drawNURBSCtrlPolygon_H(const NURBSCurve &nurbsCurve, Vec3f color)
 	// homogenized 
 	// NURBS' control polygon (e.g. with GL_LINE_STRIP)
 	// =========================================================================================================
+	glBegin(GL_LINE_STRIP);
+	glColor3fv(&color.x);
 
+	for (unsigned int i = 0; i < nurbsCurve.getControlPoints().size(); i++) {
+		glVertex3f(nurbsCurve.getControlPoints()[i].x, nurbsCurve.getControlPoints()[i].y, nurbsCurve.getControlPoints()[i].z);
+	}
+	glEnd();
+
+	glBegin(GL_POINTS);
+	glColor3fv(&color.y);
+
+	for (unsigned int i = 0; i < nurbsCurve.getControlPoints().size(); i++) {
+		glVertex3f(nurbsCurve.getControlPoints()[i].x, nurbsCurve.getControlPoints()[i].y, nurbsCurve.getControlPoints()[i].z);
+	}
+	glEnd();
 
 	// =========================================================================================================
 }
