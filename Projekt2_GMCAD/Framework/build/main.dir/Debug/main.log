@@ -1,4 +1,4 @@
-﻿  BezierCurve.cpp
-C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\BezierCurve.cpp(115): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
-C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\BezierCurve.cpp(117): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+﻿  CurveRendering.cpp
+C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\CurveRendering.cpp(18): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\CurveRendering.cpp(20): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
   main.vcxproj -> C:\Users\tolga\Desktop\Projekt2_GMCAD\Framework\build\Debug\main.exe

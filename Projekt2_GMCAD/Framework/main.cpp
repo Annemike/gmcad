@@ -85,15 +85,22 @@ void createCurves()
 	bezierCurves.clear();
 	// TODO: create at least one bezier and one degree 2 quarter circle rational bezier curve
 	// ==========================================================================
+	float w = 1.0f;
+	float x = 2.0f;
+	float y = 3.0f;
 	Vec3f v1 = Vec3f(0.0f, 0.0f, 0.0f);
-	Vec3f v2 = Vec3f(1.0f, 2.0f, 0.0f);
-	Vec3f v3 = Vec3f(2.5f, 0.0f, 0.0f);
+	Vec3f v2 = Vec3f(0.0f, 2.0f, 0.0f);
+	Vec3f v3 = Vec3f(0.0f, 2.0f, 2.0f);
 	
+	
+
 
 	std::vector<Vec3f> cps = {v1,v2,v3};
 	BezierCurve  curve1(cps);
-	curve1.evaluateCurveAt(0.3f, v1);
+
+	curve1.separateRationalCurveAt(0.5f, 10.0f);
 	bezierCurves.push_back(curve1);
+	//bezierCurves.push_back(curve2);
 	// ==========================================================================
 	for (auto &b : bezierCurves)
 		std::cout << b << std::endl;
@@ -205,8 +212,6 @@ void keyPressed(unsigned char key, int x, int y)
 	case 'I':
 		if (evalParameter < 0.99f) {
 			evalParameter += 0.01f;
-			std::cout << evalParameter << std::endl;
-			std::cout << bezierCurves[0].evaluateCurveAt(evalParameter, Vec3f()) << std::endl;
 		}
 		glutPostRedisplay();
 		break;
@@ -215,8 +220,6 @@ void keyPressed(unsigned char key, int x, int y)
 	
 		if (evalParameter >= 0.01f) {
 			evalParameter -= 0.01f;
-			std::cout << evalParameter << std::endl;
-			std::cout << bezierCurves[0].evaluateCurveAt(evalParameter, Vec3f())<<std::endl;
 		}
 
 		

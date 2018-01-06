@@ -18,6 +18,10 @@ public:
 	// constructor which takes given control points
 	BezierCurve(const std::vector<Vec3f>& controlPoints_, bool isRational = false);
 
+	std::vector<Vec3f> getBezierCurvePoints();
+
+	std::pair<BezierCurve, BezierCurve> separateRationalCurveAt(const float t, float w);
+
 	std::vector<Vec3f> derivateBezier(const float t, std::vector<Vec3f> p);
 
 	const float calculateBlendingFunction(int i , int n, const float t);

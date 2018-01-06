@@ -11,16 +11,15 @@
 
 void drawBezier(BezierCurve &bezierCurve, Vec3f color)
 {
-	std::vector<Vec3f> tmpList;
+	std::vector<Vec3f> tmpList1;
 	
 	for (float t = 0; t <= 1; t += 0.05f) {
-
 
 		for (int i = 0; i < bezierCurve.separateCurveAt(t).first.getControlPoints().size(); i++) {
 
 			for (int k = 0; k < bezierCurve.separateCurveAt(t).second.getControlPoints().size(); k++) {
 				if (bezierCurve.separateCurveAt(t).first.getControlPoints()[i] == bezierCurve.separateCurveAt(t).second.getControlPoints()[k]) {
-					tmpList.push_back(bezierCurve.separateCurveAt(t).first.getControlPoints()[i]);
+					tmpList1.push_back(bezierCurve.separateCurveAt(t).first.getControlPoints()[i]);
 				}
 			}
 		}
@@ -29,9 +28,18 @@ void drawBezier(BezierCurve &bezierCurve, Vec3f color)
 	// ===============================================================================
 	glBegin(GL_LINE_STRIP);
 	glColor3fv(&color.y);
-	for (unsigned int i = 0; i < tmpList.size(); i++) {
-		glVertex3fv(&tmpList[i].x);
+	for (unsigned int i = 0; i < tmpList1.size(); i++) {
+		glVertex3fv(&tmpList1[i].x);
 	}
+	glEnd();
+
+	glBegin(GL_POINTS);
+	
+	glColor3fv(&color.x);
+	for (unsigned int i = 0; i < tmpList1.size(); i++) {
+		glVertex3fv(&tmpList1[i].x);
+	}
+	
 	glEnd();
 	// ===============================================================================
 }
@@ -42,11 +50,18 @@ void drawBezierCtrlPolygon(const BezierCurve &bezierCurve, Vec3f color)
 	// cps of the complete curve
 	glBegin(GL_LINE_STRIP);
 	glColor3fv(&color.x);
+	
 	for (unsigned int i = 0; i < bezierCurve.getControlPoints().size(); i++) {
 		glVertex3f(bezierCurve.getControlPoints()[i].x, bezierCurve.getControlPoints()[i].y, bezierCurve.getControlPoints()[i].z);
 	}
+	glEnd();
 
-	
+	glBegin(GL_POINTS);
+	glColor3fv(&color.y);
+
+	for (unsigned int i = 0; i < bezierCurve.getControlPoints().size(); i++) {
+		glVertex3f(bezierCurve.getControlPoints()[i].x, bezierCurve.getControlPoints()[i].y,bezierCurve.getControlPoints()[i].z);
+	}	
 	glEnd();
 	// ===============================================================================
 }
@@ -68,6 +83,7 @@ void drawRationalBezierCtrlPolygon(const BezierCurve &bezierCurve, Vec3f color)
 		// ===============================================================================
 		// cps of the complete curve
 		// ===============================================================================
+		
 	}
 }
 
