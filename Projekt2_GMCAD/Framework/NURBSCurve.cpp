@@ -5,7 +5,7 @@
 
 NURBSCurve::NURBSCurve()
 {
-	
+
 	isValidNURBS();
 }
 
@@ -22,7 +22,7 @@ bool NURBSCurve::isValidNURBS()
 {
 	// knot vector verification
 	bool validU = true;
-	for (unsigned int i = 1; i < knotVector.size() && validU == true; i++) if (knotVector[i] < knotVector[i-1])
+	for (unsigned int i = 1; i < knotVector.size() && validU == true; i++) if (knotVector[i] < knotVector[i - 1])
 	{
 		std::cout << "INVALID (unsorted) knotVector.\n";
 		validU = false;
@@ -30,7 +30,7 @@ bool NURBSCurve::isValidNURBS()
 	}
 	// size verification
 	bool validSize = true;
-	if (controlPoints.size() + degree + 1 != knotVector.size()) 
+	if (controlPoints.size() + degree + 1 != knotVector.size())
 	{
 		std::cout << "INVALID sizes (controlPoints.size() + degree + 1 != knotVector.size()).\n";
 		validSize = false;
@@ -52,7 +52,7 @@ bool NURBSCurve::insertKnot(const float newKnot)
 			kFound = true;
 
 		}
-	
+
 	std::vector<Vec4f> newControlPoints(controlPoints);
 	newControlPoints.push_back(Vec4f(0, 0, 0, 0));
 	float alpha, zaehler, nenner;
@@ -124,7 +124,7 @@ Vec4f NURBSCurve::evaluteDeBoor(const float t, Vec4f& tangent)
 	tangent.y = previous.w * point.y - point.w * previous.y;
 	tangent.z = previous.w * point.z - point.w * previous.z;
 	tangent.w = previous.w * point.w;
-		// =====================================================================================================================================
+	// =====================================================================================================================================
 	return point;
 }
 
@@ -150,7 +150,7 @@ std::pair<std::vector<Vec4f>, std::vector<Vec4f>> NURBSCurve::evaluateCurve(cons
 	}
 	// ==========================================================================================================
 
-	return std::make_pair(points,tangents);
+	return std::make_pair(points, tangents);
 }
 
 std::ostream& operator<< (std::ostream& os, NURBSCurve& nurbs)

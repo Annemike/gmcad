@@ -7,12 +7,14 @@
 #include <BezierCurve.h>
 #include <NURBSCurve.h>
 #include <algorithm>
+#include <stdio.h>		// cout
+#include <iostream>		// cout
 
 
 void drawBezier(BezierCurve &bezierCurve, Vec3f color)
 {
 	std::vector<Vec3f> tmpList1;
-	
+
 	for (float t = 0; t <= 1; t += 0.05f) {
 
 		for (int i = 0; i < bezierCurve.separateCurveAt(t).first.getControlPoints().size(); i++) {
@@ -31,7 +33,7 @@ void drawBezier(BezierCurve &bezierCurve, Vec3f color)
 	for (unsigned int i = 0; i < tmpList1.size(); i++) {
 		glVertex3fv(&tmpList1[i].x);
 	}
-	
+
 	glEnd();
 
 
@@ -44,7 +46,7 @@ void drawBezierCtrlPolygon(const BezierCurve &bezierCurve, Vec3f color)
 	// cps of the complete curve
 	glBegin(GL_LINE_STRIP);
 	glColor3fv(&color.x);
-	
+
 	for (unsigned int i = 0; i < bezierCurve.getControlPoints().size(); i++) {
 		glVertex3f(bezierCurve.getControlPoints()[i].x, bezierCurve.getControlPoints()[i].y, bezierCurve.getControlPoints()[i].z);
 	}
@@ -54,8 +56,8 @@ void drawBezierCtrlPolygon(const BezierCurve &bezierCurve, Vec3f color)
 	glColor3fv(&color.y);
 
 	for (unsigned int i = 0; i < bezierCurve.getControlPoints().size(); i++) {
-		glVertex3f(bezierCurve.getControlPoints()[i].x, bezierCurve.getControlPoints()[i].y,bezierCurve.getControlPoints()[i].z);
-	}	
+		glVertex3f(bezierCurve.getControlPoints()[i].x, bezierCurve.getControlPoints()[i].y, bezierCurve.getControlPoints()[i].z);
+	}
 	glEnd();
 	// ===============================================================================
 }
@@ -65,7 +67,7 @@ void drawRationalBezier(BezierCurve &bezierCurve, Vec3f color)
 	{
 		// TODO: implement the visualization of the 2D rational bezier curve in the plane w=1 (e.g. with GL_LINE_STRIP)
 		// ===============================================================================
-		
+
 		// ===============================================================================
 	}
 }
@@ -77,7 +79,7 @@ void drawRationalBezierCtrlPolygon(const BezierCurve &bezierCurve, Vec3f color)
 		// ===============================================================================
 		// cps of the complete curve
 		// ===============================================================================
-		
+
 	}
 }
 
@@ -86,8 +88,15 @@ void drawNURBS(NURBSCurve &nurbsCurve, Vec3f color)
 	// TODO: draw NURBS curve
 	// NOT homogenized
 	// ===================================================================================
-
-
+	auto pointsAndTangents = nurbsCurve.evaluateCurve(size_t(50));
+	auto points = pointsAndTangents.first;
+	
+	glBegin(GL_LINE_STRIP);
+	glColor3fv(&color.x);
+	for (unsigned int i = 0; i < points.size(); i++) {
+		glVertex3fv(&points[i].x);
+	}
+	glEnd();
 	// ===================================================================================
 }
 void drawNURBS_H(NURBSCurve &nurbsCurve, Vec3f color)
@@ -95,8 +104,21 @@ void drawNURBS_H(NURBSCurve &nurbsCurve, Vec3f color)
 	// TODO: draw NURBS curve
 	// homogenized
 	// ===================================================================================
+	auto pointsAndTangents = nurbsCurve.evaluateCurve(size_t(50));
+	auto points = pointsAndTangents.first;
 
+	for (int i = 0; i < points.size(); i++)
+	{
+		auto p = &points[i];
+		(*p).homogenize();
+	}
 
+	glBegin(GL_LINE_STRIP);
+	glColor3fv(&color.x);
+	for (unsigned int i = 0; i < points.size(); i++) {
+		glVertex3fv(&points[i].x);
+	}
+	glEnd();
 	// ===================================================================================
 }
 void drawNURBSCtrlPolygon(const NURBSCurve &nurbsCurve, Vec3f color)
@@ -109,7 +131,8 @@ void drawNURBSCtrlPolygon(const NURBSCurve &nurbsCurve, Vec3f color)
 	glColor3fv(&color.x);
 
 	for (unsigned int i = 0; i < nurbsCurve.getControlPoints().size(); i++) {
-		glVertex3f(nurbsCurve.getControlPoints()[i].x, nurbsCurve.getControlPoints()[i].y, nurbsCurve.getControlPoints()[i].w);
+		auto p = nurbsCurve.getControlPoints()[i];
+		glVertex3fv(&p.x);
 	}
 	glEnd();
 
@@ -117,7 +140,8 @@ void drawNURBSCtrlPolygon(const NURBSCurve &nurbsCurve, Vec3f color)
 	glColor3fv(&color.y);
 
 	for (unsigned int i = 0; i < nurbsCurve.getControlPoints().size(); i++) {
-		glVertex3f(nurbsCurve.getControlPoints()[i].x, nurbsCurve.getControlPoints()[i].y, nurbsCurve.getControlPoints()[i].w);
+		auto p = nurbsCurve.getControlPoints()[i];
+		glVertex3fv(&p.x);
 	}
 	glEnd();
 	// =========================================================================================================
@@ -128,22 +152,29 @@ void drawNURBSCtrlPolygon_H(const NURBSCurve &nurbsCurve, Vec3f color)
 	// homogenized 
 	// NURBS' control polygon (e.g. with GL_LINE_STRIP)
 	// =========================================================================================================
+	std::vector<Vec4f> tempPoints(nurbsCurve.getControlPoints());
+	for (int i = 0 ; i < tempPoints.size(); i++)
+	{
+		auto p = &tempPoints[i];
+		(*p).homogenize();
+	}
 	glBegin(GL_LINE_STRIP);
 	glColor3fv(&color.x);
 
-	for (unsigned int i = 0; i < nurbsCurve.getControlPoints().size(); i++) {
-		glVertex3f(nurbsCurve.getControlPoints()[i].x, nurbsCurve.getControlPoints()[i].y, nurbsCurve.getControlPoints()[i].z);
+	for (unsigned int i = 0; i < tempPoints.size(); i++) {
+		auto p = tempPoints[i];
+		glVertex3fv(&p.x);
 	}
 	glEnd();
 
 	glBegin(GL_POINTS);
 	glColor3fv(&color.y);
 
-	for (unsigned int i = 0; i < nurbsCurve.getControlPoints().size(); i++) {
-		glVertex3f(nurbsCurve.getControlPoints()[i].x, nurbsCurve.getControlPoints()[i].y, nurbsCurve.getControlPoints()[i].z);
+	for (unsigned int i = 0; i < tempPoints.size(); i++) {
+		auto p = tempPoints[i];
+		glVertex3fv(&p.x);
 	}
 	glEnd();
-
 	// =========================================================================================================
 }
 
@@ -223,7 +254,7 @@ void renderNURBSEvaluation(NURBSCurve &nurbsCurve, float t)
 	if (!nurbsCurve.isValidNURBS())
 		return;
 
-	auto pointsAndTangents = nurbsCurve.evaluateCurve(size_t(50));
+	auto pointsAndTangents = nurbsCurve.evaluateCurve(size_t(5));
 	auto points = pointsAndTangents.first;
 	auto tangents = pointsAndTangents.second;
 

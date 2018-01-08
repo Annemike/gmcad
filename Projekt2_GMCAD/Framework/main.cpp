@@ -91,37 +91,42 @@ void createCurves()
 	Vec3f v1 = Vec3f(0.0f, 0.0f, 0.0f);
 	Vec3f v2 = Vec3f(0.0f, 2.0f, 0.0f);
 	Vec3f v3 = Vec3f(0.0f, 2.0f, 2.0f);
-	
-	
 
 
-	std::vector<Vec3f> cps = {v1,v2,v3};
+
+
+	std::vector<Vec3f> cps = { v1,v2,v3 };
 	BezierCurve  curve1(cps);
-	
+
 	bezierCurves.push_back(curve1);
 	// ==========================================================================
 	for (auto &b : bezierCurves)
 		std::cout << b << std::endl;
-	
+
 	nurbsCurves.clear();
 	// TODO: set values to describe a degree 2 quarter circle in first quadrant, XY-plane
 	// ==================================================================================
-	Vec4f v1n = Vec4f(1.0f, 0.0f, 0.0f, 1.0f);
-	Vec4f v2n = Vec4f(1.0f, 1.0f, 0.0f, 1.0f);
-	Vec4f v3n = Vec4f(0.0f, 2.0f, 0.0f, 2.0f);
-
-	std::vector<Vec4f> cps2 = { v1n,v2n,v3n };
-
+	Vec4f v1qc = Vec4f(1.0f, 0.0f, 0.0f, 1.0f);
+	Vec4f v2qc = Vec4f(1.0f, 1.0f, 0.0f, 1.0f);
+	Vec4f v3qc = Vec4f(0.0f, 2.0f, 0.0f, 2.0f);
+	std::vector<Vec4f> cpsqc = { v1qc,v2qc,v3qc };
 	std::vector<float> knots = { 0,0,0,1,1,1 };
-	NURBSCurve curve2(cps2, knots, 2);
-	Vec4f tan;
+	NURBSCurve quarterCircle(cpsqc, knots, 2);
+	nurbsCurves.push_back(quarterCircle);
+
+	Vec4f v1h = Vec4f(-1.0f, 0.0f, -2.0f, 1.0f);
+	Vec4f v2h = Vec4f(0.0f, 8.0f/3.0f, -4.0f, 2.0f);
+	Vec4f v3h = Vec4f(1.0f, 0.0f, -2.0f, 1.0f);
+	std::vector<Vec4f> cpsh = { v1h,v2h,v3h };
+	NURBSCurve hyperbel(cpsh, knots, 2);
+	nurbsCurves.push_back(hyperbel);
+	/*Vec4f tan;
 	std::cout << curve2.evaluteDeBoor(0.1f, tan) << std::endl << tan << std::endl;
 	std::pair<std::vector<Vec4f>, std::vector<Vec4f>> res = curve2.evaluateCurve(11);
 	for (int i = 0; i < 11; i++)
 	{
 		std::cout << std::get<0>(res)[i] << " tangiert durch " << std::get<1>(res)[i] << std::endl;
-	}
-	nurbsCurves.push_back(curve2);
+	}*/
 	// ==================================================================================
 	for (auto &n : nurbsCurves)
 		std::cout << n << std::endl;
@@ -161,16 +166,16 @@ void drawCS()
 
 void drawObjects()
 {
-	for(unsigned int i = 0; i < bezierCurves.size(); ++i)
+	for (unsigned int i = 0; i < bezierCurves.size(); ++i)
 	{
 		renderBezier(bezierCurves[i]);
-		if(i == activeBezier)
+		if (i == activeBezier)
 			renderBezierEvaluation(bezierCurves[i], evalParameter);
 	}
-	for(unsigned int i = 0; i < nurbsCurves.size(); ++i)
+	for (unsigned int i = 0; i < nurbsCurves.size(); ++i)
 	{
 		renderNURBS(nurbsCurves[i]);
-		if(i == activeNURBS)
+		if (i == activeNURBS)
 			renderNURBSEvaluation(nurbsCurves[i], evalParameter);
 	}
 }
@@ -200,27 +205,27 @@ void renderScene()
 
 void keyPressed(unsigned char key, int x, int y)
 {
-	switch(key)
+	switch (key)
 	{
-	// esc => exit
+		// esc => exit
 	case 27:
 		exit(0);
 		break;
-	// help file
-	case 'h' :
-	case 'H' :
+		// help file
+	case 'h':
+	case 'H':
 		coutHelp();
 		break;
-	// reset view
-	case 'r' :
-	case 'R' :
+		// reset view
+	case 'r':
+	case 'R':
 		setDefaults();
 		glutPostRedisplay();	// use this whenever 3d data changed to redraw the scene
 		break;
-	// TODO: place custom functions on button events here to present your results
-	// like changing the active Bbezier/NURBS curve (activeNURBS, activeBezier)
-	// and varying the evaluation parameter (evalParameter) for the bezier curve
-	// ==========================================================================
+		// TODO: place custom functions on button events here to present your results
+		// like changing the active Bbezier/NURBS curve (activeNURBS, activeBezier)
+		// and varying the evaluation parameter (evalParameter) for the bezier curve
+		// ==========================================================================
 	case 'i':
 	case 'I':
 		if (evalParameter < 0.99f) {
@@ -232,27 +237,27 @@ void keyPressed(unsigned char key, int x, int y)
 		break;
 	case 'd':
 	case 'D':
-	
+
 		if (evalParameter >= 0.01f) {
-			
+
 			evalParameter -= 0.01f;
 			std::cout << "t= ";
-			std::cout << evalParameter<<std::endl;
+			std::cout << evalParameter << std::endl;
 		}
 		glutPostRedisplay();
 		break;
 	case 'e':
 	case 'E':
-			int a;
-			std::cout << "Bitte geben sie an in wieviele aquidistante Punkte sich die Bezier-Kurve aufteilen soll: ";
-			std::cin >> a;
-			std::cout << "Evaluated Points: " << std::endl;
-			for (int i = 0; i < bezierCurves[0].evaluateCurve(a - 1).first.size(); i++) {
-				std::cout << bezierCurves[0].evaluateCurve(a - 1).first[i] << std::endl;
-			}
+		int a;
+		std::cout << "Bitte geben sie an in wieviele aquidistante Punkte sich die Bezier-Kurve aufteilen soll: ";
+		std::cin >> a;
+		std::cout << "Evaluated Points: " << std::endl;
+		for (int i = 0; i < bezierCurves[0].evaluateCurve(a - 1).first.size(); i++) {
+			std::cout << bezierCurves[0].evaluateCurve(a - 1).first[i] << std::endl;
+		}
 		glutPostRedisplay();
 		break;
-	// ==========================================================================
+		// ==========================================================================
 	}
 }
 
@@ -266,22 +271,22 @@ void mousePressed(int button, int state, int x, int y)
 void mouseMoved(int x, int y)
 {
 	// rotate (cap angleY within [-85°, +85°])
-	if(mouseButton == GLUT_LEFT_BUTTON)
+	if (mouseButton == GLUT_LEFT_BUTTON)
 	{
 		angleX = fmod(angleX + (x - mouseX) * mouseSensitivy, 360.0f);
 		angleY += (y - mouseY) * mouseSensitivy;
-		if(angleY > 85) angleY = 85;
-		if(angleY < -85) angleY = -85;
+		if (angleY > 85) angleY = 85;
+		if (angleY < -85) angleY = -85;
 		glutPostRedisplay();
 	}
 	// zoom (here translation in z)
-	if(mouseButton == GLUT_RIGHT_BUTTON)
+	if (mouseButton == GLUT_RIGHT_BUTTON)
 	{
 		transZ -= 0.2f * (y - mouseY) * mouseSensitivy;
 		glutPostRedisplay();
 	}
 	// translation in xy
-	if(mouseButton == GLUT_MIDDLE_BUTTON)
+	if (mouseButton == GLUT_MIDDLE_BUTTON)
 	{
 		transX += 0.2f * (x - mouseX) * mouseSensitivy;
 		transY -= 0.2f * (y - mouseY) * mouseSensitivy;
