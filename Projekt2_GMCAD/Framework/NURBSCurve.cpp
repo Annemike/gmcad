@@ -5,7 +5,7 @@
 
 NURBSCurve::NURBSCurve()
 {
-
+	
 	isValidNURBS();
 }
 
@@ -22,7 +22,7 @@ bool NURBSCurve::isValidNURBS()
 {
 	// knot vector verification
 	bool validU = true;
-	for (unsigned int i = 1; i < knotVector.size() && validU == true; i++) if (knotVector[i] < knotVector[i - 1])
+	for (unsigned int i = 1; i < knotVector.size() && validU == true; i++) if (knotVector[i] < knotVector[i-1])
 	{
 		std::cout << "INVALID (unsorted) knotVector.\n";
 		validU = false;
@@ -30,7 +30,7 @@ bool NURBSCurve::isValidNURBS()
 	}
 	// size verification
 	bool validSize = true;
-	if (controlPoints.size() + degree + 1 != knotVector.size())
+	if (controlPoints.size() + degree + 1 != knotVector.size()) 
 	{
 		std::cout << "INVALID sizes (controlPoints.size() + degree + 1 != knotVector.size()).\n";
 		validSize = false;
@@ -43,20 +43,20 @@ bool NURBSCurve::insertKnot(const float newKnot)
 {
 	// TODO: implement knot insertion with de boor algorithm
 	// =====================================================
-	int k;
+	 int k;
 	bool kFound = false;
 	for (unsigned int i = 0; i < knotVector.size() && !kFound; i++)
 		if (newKnot < knotVector[i])
 		{
 			k = i - 1;
 			kFound = true;
-
+			
 		}
 	
 	std::vector<Vec4f> newControlPoints(controlPoints);
-	newControlPoints.push_back(Vec4f(0, 0, 0, 0));
+		newControlPoints.push_back(Vec4f(0,0,0,0));
 	float alpha, zaehler, nenner;
-	for (unsigned int i = k - degree + 1; i <= k; i++)
+	for (unsigned int i = k - degree + 1; i < k; i++)
 	{
 		zaehler = newKnot - knotVector[i];
 		nenner = knotVector[i + degree] - knotVector[i];
@@ -64,14 +64,14 @@ bool NURBSCurve::insertKnot(const float newKnot)
 			alpha = 0;
 		else
 			alpha = zaehler / nenner;
-		newControlPoints[i] = (controlPoints[i] * alpha + controlPoints[i - 1] * (1 - alpha));
+		newControlPoints[i]=(controlPoints[i] * alpha + controlPoints[i - 1] * (1 - alpha));
 	}
-
+		
 	for (unsigned int i = k + 1; i <= controlPoints.size(); i++)
 		newControlPoints[i] = controlPoints[i - 1];
 	knotVector.insert(knotVector.begin() + k + 1, newKnot);
 	controlPoints = newControlPoints;
-
+	
 	return true;
 }
 
@@ -82,49 +82,21 @@ Vec4f NURBSCurve::evaluteDeBoor(const float t, Vec4f& tangent)
 	Vec4f point;
 	// TODO: use insertKnot to evaluate the curve and its tangent. Take care to NOT modify this NURBS curve. Instead use the temporary copy.
 	// =====================================================================================================================================
-	if (t == tempNURBS.getKnotVector().front())
-	{
-		Vec4f first = tempNURBS.getControlPoints().front();
-		Vec4f second = tempNURBS.getControlPoints().at(1);
-		tangent.x = first.w * second.x - second.w * first.x;
-		tangent.y = first.w * second.y - second.w * first.y;
-		tangent.z = first.w * second.z - second.w * first.z;
-		tangent.w = first.w * second.w;
-		return first;
-	}
-	if (t == tempNURBS.getKnotVector().back())
-	{
-		Vec4f first = tempNURBS.getControlPoints().at(tempNURBS.getControlPoints().size() - 2);
-		Vec4f second = tempNURBS.getControlPoints().back();
-		tangent.x = first.w * second.x - second.w * first.x;
-		tangent.y = first.w * second.y - second.w * first.y;
-		tangent.z = first.w * second.z - second.w * first.z;
-		tangent.w = first.w * second.w;
-		return second;
-	}
 	float  counter = 0;
-	unsigned int k = 0;
-	bool kFound = false;
 	for (int i = 0; i < tempNURBS.getKnotVector().size(); i++) {
 		if (tempNURBS.getKnotVector()[i] == t) {
 			counter += 1;
 		}
-		if (!kFound && t <= tempNURBS.getKnotVector()[i])
-		{
-			k = i - 1;
-			kFound = true;
-		}
 	}
-	for (int i = 0; i < tempNURBS.getDegree() - counter; i++) {
+	for (int i = 0; i < tempNURBS.getDegree()-counter+1; i++) {
 		tempNURBS.insertKnot(t);
+		
 	}
-	point = tempNURBS.getControlPoints().at(k);
-	Vec4f previous = tempNURBS.getControlPoints().at(k - 1);
-	tangent.x = previous.w * point.x - point.w * previous.x;
-	tangent.y = previous.w * point.y - point.w * previous.y;
-	tangent.z = previous.w * point.z - point.w * previous.z;
-	tangent.w = previous.w * point.w;
-	// =====================================================================================================================================
+	for (int i = 0; i < tempNURBS.getControlPoints().size(); i++) {
+		std::cout << tempNURBS.getControlPoints()[i] << std::endl;
+
+	}
+		// =====================================================================================================================================
 	return point;
 }
 
@@ -138,19 +110,11 @@ std::pair<std::vector<Vec4f>, std::vector<Vec4f>> NURBSCurve::evaluateCurve(cons
 	// TODO: implement evaluation of the NURBS curve at 'numberSamples' equidistant points
 	// Note: use the evaluteDeBoor(t) function. 
 	// ==========================================================================================================
-	float begin = knotVector.front();
-	float end = knotVector.back();
-	float dist = end - begin;
-	float step = dist / (numberSamples - 1);
-	Vec4f tangent;
-	for (int i = 0; i < numberSamples; i++)
-	{
-		points.push_back(evaluteDeBoor(begin + i * step, tangent));
-		tangents.push_back(tangent);
-	}
+
+
 	// ==========================================================================================================
 
-	return std::make_pair(points, tangents);
+	return std::make_pair(points,tangents);
 }
 
 std::ostream& operator<< (std::ostream& os, NURBSCurve& nurbs)

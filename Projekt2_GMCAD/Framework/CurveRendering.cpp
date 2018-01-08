@@ -31,6 +31,7 @@ void drawBezier(BezierCurve &bezierCurve, Vec3f color)
 	for (unsigned int i = 0; i < tmpList1.size(); i++) {
 		glVertex3fv(&tmpList1[i].x);
 	}
+	
 	glEnd();
 
 
