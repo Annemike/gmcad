@@ -12,31 +12,16 @@
 
 
 void drawBezier(BezierCurve &bezierCurve, Vec3f color)
-{
-	std::vector<Vec3f> tmpList1;
-
-	for (float t = 0; t <= 1; t += 0.05f) {
-
-		for (int i = 0; i < bezierCurve.separateCurveAt(t).first.getControlPoints().size(); i++) {
-
-			for (int k = 0; k < bezierCurve.separateCurveAt(t).second.getControlPoints().size(); k++) {
-				if (bezierCurve.separateCurveAt(t).first.getControlPoints()[i] == bezierCurve.separateCurveAt(t).second.getControlPoints()[k]) {
-					tmpList1.push_back(bezierCurve.separateCurveAt(t).first.getControlPoints()[i]);
-				}
-			}
-		}
-	}
+{	
 	// TODO: implement the visualization of the 3D bezier curve (e.g. with GL_LINE_STRIP)
 	// ===============================================================================
+	std::vector<Vec3f> tmpList1 = bezierCurve.evaluateCurve(21).first;
 	glBegin(GL_LINE_STRIP);
 	glColor3fv(&color.y);
 	for (unsigned int i = 0; i < tmpList1.size(); i++) {
 		glVertex3fv(&tmpList1[i].x);
 	}
-
 	glEnd();
-
-
 	// ===============================================================================
 }
 void drawBezierCtrlPolygon(const BezierCurve &bezierCurve, Vec3f color)
@@ -67,7 +52,17 @@ void drawRationalBezier(BezierCurve &bezierCurve, Vec3f color)
 	{
 		// TODO: implement the visualization of the 2D rational bezier curve in the plane w=1 (e.g. with GL_LINE_STRIP)
 		// ===============================================================================
-
+		std::vector<Vec3f> tmpList1 = bezierCurve.evaluateCurve(21).first;
+		for (int i = 0; i < tmpList1.size(); i++)
+		{
+			tmpList1[i] /= tmpList1[i].z;
+		}
+		glBegin(GL_LINE_STRIP);
+		glColor3fv(&color.y);
+		for (unsigned int i = 0; i < tmpList1.size(); i++) {
+			glVertex3fv(&tmpList1[i].x);
+		}
+		glEnd();
 		// ===============================================================================
 	}
 }
@@ -77,7 +72,26 @@ void drawRationalBezierCtrlPolygon(const BezierCurve &bezierCurve, Vec3f color)
 	{
 		// TODO: implement the visualization of the 2D rational bezier curves control polygon in the plane w=1 (e.g. with GL_LINE_STRIP)
 		// ===============================================================================
-		// cps of the complete curve
+		glBegin(GL_LINE_STRIP);
+		glColor3fv(&color.x);
+		std::vector<Vec3f> cps = bezierCurve.getControlPoints();
+		for (int i = 0; i < cps.size(); i++)
+		{
+			cps[i] /= cps[i].z;
+		}
+		for (unsigned int i = 0; i < cps.size(); i++)
+		{
+			glVertex3fv(&cps[i].x);
+		}
+		glEnd();
+
+		glBegin(GL_POINTS);
+		glColor3fv(&color.y);
+
+		for (unsigned int i = 0; i < bezierCurve.getControlPoints().size(); i++) {
+			glVertex3fv(&cps[i].x);
+		}
+		glEnd();
 		// ===============================================================================
 
 	}
@@ -273,11 +287,18 @@ void renderNURBSEvaluation(NURBSCurve &nurbsCurve, float t)
 		glBegin(GL_LINES);
 		for (unsigned int i = 0; i < tangents.size(); ++i)
 		{
-			auto p = points[i];
+			/*auto p = points[i];
 			auto t = tangents[i];
 			t = Vec4f(t.w * p.x + p.w * t.x, t.w * p.y + p.w * t.y, t.w * p.z + p.w * t.z, 1.0f);
 			glVertex3fv(&p.x);
 			t = (t - p).normalized() + p;
+			glVertex3fv(&t.x);*/
+
+			auto p = points[i];
+			auto t = tangents[i];
+			glVertex3fv(&p.x);
+			Vec4f r = Vec4f(t.x, t.y, t.z, 0.0f);
+			t = t.normalized() + p;
 			glVertex3fv(&t.x);
 		}
 		glEnd();
@@ -286,11 +307,21 @@ void renderNURBSEvaluation(NURBSCurve &nurbsCurve, float t)
 		glBegin(GL_LINES);
 		for (unsigned int i = 0; i < tangents.size(); ++i)
 		{
-			auto p = points[i];
+			/*auto p = points[i];
 			auto t = tangents[i];
 			p = p / p.w;
 			t = t / t.w;
 			t = p + t;
+			glVertex3fv(&p.x);
+			t = (t - p).normalized() + p;
+			glVertex3fv(&t.x);*/
+			auto p = points[i];
+			auto t = tangents[i];
+			t = p + t;
+			p = p / p.w;
+			t = t / t.w;
+			p = Vec4f(p.x, p.y, p.z, 0.0f);
+			t = Vec4f(t.x, t.y, t.z, 0.0f);
 			glVertex3fv(&p.x);
 			t = (t - p).normalized() + p;
 			glVertex3fv(&t.x);

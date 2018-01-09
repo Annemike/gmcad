@@ -85,20 +85,38 @@ void createCurves()
 	bezierCurves.clear();
 	// TODO: create at least one bezier and one degree 2 quarter circle rational bezier curve
 	// ==========================================================================
-	float w = 1.0f;
-	float x = 2.0f;
-	float y = 3.0f;
-	Vec3f v1 = Vec3f(0.0f, 0.0f, 0.0f);
-	Vec3f v2 = Vec3f(0.0f, 2.0f, 0.0f);
-	Vec3f v3 = Vec3f(0.0f, 2.0f, 2.0f);
+	Vec3f v1b = Vec3f(0.0f, 0.0f, 0.0f);
+	Vec3f v2b = Vec3f(0.0f, 2.0f, 0.0f);
+	Vec3f v3b = Vec3f(0.0f, 2.0f, 2.0f);
+	std::vector<Vec3f> cpsb = { v1b,v2b,v3b };
+	BezierCurve  bezier(cpsb);
+	bezierCurves.push_back(bezier);
 
+	Vec3f v1rb = Vec3f(1.0f, 0.0f, 1.0f);
+	Vec3f v2rb = Vec3f(1.0f, 1.0f, 1.0f);
+	Vec3f v3rb = Vec3f(0.0f, 2.0f, 2.0f);
+	std::vector<Vec3f> cpsrb = { v1rb,v2rb,v3rb };
+	BezierCurve rationalBezier(cpsrb, true);
+	bezierCurves.push_back(rationalBezier);
 
+	Vec3f v1bh = Vec3f(-1.0f, 0.0f, 1.0f);
+	Vec3f v2bh = Vec3f(0.0f, 8.0f / 3.0f, 2.0f);
+	Vec3f v3bh = Vec3f(1.0f, 0.0f, 1.0f);
+	std::vector<Vec3f> cpsbh = { v1bh,v2bh,v3bh };
+	BezierCurve bezierHyperbel(cpsbh, true);
+	bezierCurves.push_back(bezierHyperbel);
 
-
-	std::vector<Vec3f> cps = { v1,v2,v3 };
-	BezierCurve  curve1(cps);
-
-	bezierCurves.push_back(curve1);
+	Vec3f v1g = Vec3f(0.0f, 0.0f, 0.0f);
+	Vec3f v2g = Vec3f(1.0f, 0.0f, 0.2f);
+	Vec3f v3g = Vec3f(1.0f, 1.0f, 0.4f);
+	Vec3f v4g = Vec3f(0.0f, 1.0f, 0.6f);
+	Vec3f v5g = Vec3f(0.0f, 0.0f, 0.8f);
+	Vec3f v6g = Vec3f(0.5f, 0.0f, 1.0f);
+	Vec3f v7g = Vec3f(0.5f, 0.5f, 0.0f);
+	Vec3f v8g = Vec3f(0.5f, 0.5f, -1.0f);
+	std::vector<Vec3f> cpsg = { v1g,v2g,v3g,v4g,v5g,v6g,v7g,v8g };
+	BezierCurve  giganticBezier(cpsg);
+	bezierCurves.push_back(giganticBezier);
 	// ==========================================================================
 	for (auto &b : bezierCurves)
 		std::cout << b << std::endl;
@@ -132,11 +150,11 @@ void createCurves()
 	nurbsCurves.push_back(hyperbelQuartered);
 
 	Vec4f v1r = Vec4f(0.0f, 0.0f, 0.0f, 1.0f);
-	Vec4f v2r = Vec4f(1.0f, 0.0f, 0.0f, 1.0f);
-	Vec4f v3r = Vec4f(1.0f, 1.0f, 0.0f, 1.0f);
-	Vec4f v4r = Vec4f(-1.0f, 1.0f, 0.0f, 1.0f);
-	Vec4f v5r = Vec4f(-1.0f, -1.0f, 0.0f, 1.0f);
-	Vec4f v6r = Vec4f(1.0f, -1.0f, 0.0f, 1.0f);
+	Vec4f v2r = Vec4f(1.0f, 0.0f, 0.1f, 1.0f);
+	Vec4f v3r = Vec4f(1.0f, 1.0f, 0.2f, 1.0f);
+	Vec4f v4r = Vec4f(-1.0f, 1.0f, 0.4f, 1.0f);
+	Vec4f v5r = Vec4f(-1.0f, -1.0f, 0.6f, 1.0f);
+	Vec4f v6r = Vec4f(1.0f, -1.0f, 0.8f, 1.0f);
 	std::vector<Vec4f> cpsr = { v1r,v2r,v3r,v4r,v5r,v6r };
 	std::vector<float> knotsa = { 0,0,0,1,2,3,4,4,4 };
 	NURBSCurve random(cpsr, knotsa, 2);
@@ -293,18 +311,52 @@ void keyPressed(unsigned char key, int x, int y)
 	case 'E':
 		if (activeBezier == 1337)
 			break;
-		int a;
-		std::cout << "Bitte geben sie an in wieviele aquidistante Punkte sich die Bezier-Kurve aufteilen soll: ";
-		std::cin >> a;
+		int anzahl;
+		std::cout << "Bitte geben Sie an in wieviele aquidistante Punkte sich die Bezier-Kurve aufteilen soll: ";
+		std::cin >> anzahl;
 		std::cout << "Evaluated Points: " << std::endl;
-		for (int i = 0; i < bezierCurves[0].evaluateCurve(a - 1).first.size(); i++) {
-			std::cout << bezierCurves[0].evaluateCurve(a - 1).first[i] << std::endl;
+		for (int i = 0; i < bezierCurves[activeBezier].evaluateCurve(anzahl).first.size(); i++) {
+			std::cout << bezierCurves[activeBezier].evaluateCurve(anzahl).first[i] << std::endl;
 		}
+		glutPostRedisplay();
+		break;
+	case 'a':
+	case 'A':
+		if (activeBezier == 1337)
+			break;
+		float stelle;
+		std::cout << "Bitte geben Sie die Stelle im Intervall [0,1] an, an der der Punkt berechnet werden soll:" << std::endl;
+		std::cin >> stelle;
+		while (stelle < 0 || stelle > 1)
+		{
+			std::cout << "Bitte geben Sie eine Zahl zwischen 0 und 1 ein!" << std::endl;
+			std::cin >> stelle;
+		}
+		std::cout << "An der Stelle " << stelle << " wird die Kurve zu " << bezierCurves[activeBezier].evaluateCurveAt(stelle, Vec3f()) << " ausgewertet." << std::endl;
+		evalParameter = stelle;
 		glutPostRedisplay();
 		break;
 	case 'b':
 	case 'B':
 		activeBezier = 0;
+		activeNURBS = 1337;
+		glutPostRedisplay();
+		break;
+	case 'q':
+	case 'Q':
+		activeBezier = 1;
+		activeNURBS = 1337;
+		glutPostRedisplay();
+		break;
+	case 'p':
+	case 'P':
+		activeBezier = 2;
+		activeNURBS = 1337;
+		glutPostRedisplay();
+		break;
+	case 'g':
+	case 'G':
+		activeBezier = 3;
 		activeNURBS = 1337;
 		glutPostRedisplay();
 		break;
@@ -433,10 +485,13 @@ void coutHelp()
 	std::cout << "H: show this (H)elp file" << std::endl;
 	std::cout << "R: (R)eset view" << std::endl;
 	std::cout << "B: show (B)ezier curve" << std::endl;
-	std::cout << "Q: show Rational Bezier curve" << std::endl;
+	std::cout << "G: show (G)igantic Bezier curve" << std::endl;
+	std::cout << "Q: show Rational Bezier curve (Q)uartercircle" << std::endl;
+	std::cout << "P: show Rational Bezier curve Hyperbel" << std::endl;
 	std::cout << "I: (I)ncrease the value t (Bezier exclusive)" << std::endl;
 	std::cout << "D: (D)ecrease the value t (Bezier exclusive)" << std::endl;
 	std::cout << "E: (E)valuate aquidistant points (Bezier exclusive)" << std::endl;
+	std::cout << "A: Evaluate point (A)t (Bezier exclusive)" << std::endl;
 	std::cout << "N: show 'random' (N)URBS curve" << std::endl;
 	std::cout << "K: modify (K)not vector of 'random' NURBS curve" << std::endl;
 	std::cout << "C: show (C)ircle NURBS" << std::endl;

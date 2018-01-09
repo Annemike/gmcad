@@ -86,20 +86,22 @@ Vec4f NURBSCurve::evaluteDeBoor(const float t, Vec4f& tangent)
 	{
 		Vec4f first = tempNURBS.getControlPoints().front();
 		Vec4f second = tempNURBS.getControlPoints().at(1);
-		tangent.x = first.w * second.x - second.w * first.x;
+		tangent = second - first;
+		/*tangent.x = first.w * second.x - second.w * first.x;
 		tangent.y = first.w * second.y - second.w * first.y;
 		tangent.z = first.w * second.z - second.w * first.z;
-		tangent.w = first.w * second.w;
+		tangent.w = first.w * second.w;*/
 		return first;
 	}
 	if (t == tempNURBS.getKnotVector().back())
 	{
 		Vec4f first = tempNURBS.getControlPoints().at(tempNURBS.getControlPoints().size() - 2);
 		Vec4f second = tempNURBS.getControlPoints().back();
-		tangent.x = first.w * second.x - second.w * first.x;
+		tangent = second - first;
+		/*tangent.x = first.w * second.x - second.w * first.x;
 		tangent.y = first.w * second.y - second.w * first.y;
 		tangent.z = first.w * second.z - second.w * first.z;
-		tangent.w = first.w * second.w;
+		tangent.w = first.w * second.w;*/
 		return second;
 	}
 	float  counter = 0;
@@ -120,10 +122,11 @@ Vec4f NURBSCurve::evaluteDeBoor(const float t, Vec4f& tangent)
 	}
 	point = tempNURBS.getControlPoints().at(k);
 	Vec4f previous = tempNURBS.getControlPoints().at(k - 1);
-	tangent.x = previous.w * point.x - point.w * previous.x;
+	tangent = point - previous;
+	/*tangent.x = previous.w * point.x - point.w * previous.x;
 	tangent.y = previous.w * point.y - point.w * previous.y;
 	tangent.z = previous.w * point.z - point.w * previous.z;
-	tangent.w = previous.w * point.w;
+	tangent.w = previous.w * point.w;*/
 	// =====================================================================================================================================
 	return point;
 }
