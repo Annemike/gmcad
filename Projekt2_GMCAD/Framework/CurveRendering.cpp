@@ -254,7 +254,7 @@ void renderNURBSEvaluation(NURBSCurve &nurbsCurve, float t)
 	if (!nurbsCurve.isValidNURBS())
 		return;
 
-	auto pointsAndTangents = nurbsCurve.evaluateCurve(size_t(5));
+	auto pointsAndTangents = nurbsCurve.evaluateCurve(size_t(7));
 	auto points = pointsAndTangents.first;
 	auto tangents = pointsAndTangents.second;
 

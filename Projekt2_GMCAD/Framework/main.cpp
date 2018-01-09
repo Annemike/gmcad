@@ -114,12 +114,46 @@ void createCurves()
 	NURBSCurve quarterCircle(cpsqc, knots, 2);
 	nurbsCurves.push_back(quarterCircle);
 
-	Vec4f v1h = Vec4f(-1.0f, 0.0f, -2.0f, 1.0f);
-	Vec4f v2h = Vec4f(0.0f, 8.0f/3.0f, -4.0f, 2.0f);
-	Vec4f v3h = Vec4f(1.0f, 0.0f, -2.0f, 1.0f);
+	Vec4f v1h = Vec4f(-1.0f, 0.0f, 0.0f, 1.0f);
+	Vec4f v2h = Vec4f(0.0f, 8.0f / 3.0f, 0.0f, 2.0f);
+	Vec4f v3h = Vec4f(1.0f, 0.0f, 0.0f, 1.0f);
 	std::vector<Vec4f> cpsh = { v1h,v2h,v3h };
 	NURBSCurve hyperbel(cpsh, knots, 2);
 	nurbsCurves.push_back(hyperbel);
+	
+	Vec4f v2hd = Vec4f(0.0f, 16.0f / 3.0f, 0.0f, 4.0f);
+	std::vector<Vec4f> cpshd = { v1h,v2hd,v3h };
+	NURBSCurve hyperbelDoubled(cpshd, knots, 2);
+	nurbsCurves.push_back(hyperbelDoubled);
+
+	Vec4f v2hq = Vec4f(0.0f, 2.0f / 3.0f, 0.0f, 0.5f);
+	std::vector<Vec4f> cpshq = { v1h,v2hq,v3h };
+	NURBSCurve hyperbelQuartered(cpshq, knots, 2);
+	nurbsCurves.push_back(hyperbelQuartered);
+
+	Vec4f v1r = Vec4f(0.0f, 0.0f, 0.0f, 1.0f);
+	Vec4f v2r = Vec4f(1.0f, 0.0f, 0.0f, 1.0f);
+	Vec4f v3r = Vec4f(1.0f, 1.0f, 0.0f, 1.0f);
+	Vec4f v4r = Vec4f(-1.0f, 1.0f, 0.0f, 1.0f);
+	Vec4f v5r = Vec4f(-1.0f, -1.0f, 0.0f, 1.0f);
+	Vec4f v6r = Vec4f(1.0f, -1.0f, 0.0f, 1.0f);
+	std::vector<Vec4f> cpsr = { v1r,v2r,v3r,v4r,v5r,v6r };
+	std::vector<float> knotsa = { 0,0,0,1,2,3,4,4,4 };
+	NURBSCurve random(cpsr, knotsa, 2);
+	nurbsCurves.push_back(random);
+
+	std::vector<float> knotss = { 0,0,0,1,1.5f,3,4,4,4 };
+	NURBSCurve randomSmall(cpsr, knotss, 2);
+	nurbsCurves.push_back(randomSmall);
+
+	std::vector<float> knotsb = { 0,0,0,1,2.5f,3,4,4,4 };
+	NURBSCurve randomBig(cpsr, knotsb, 2);
+	nurbsCurves.push_back(randomBig);
+
+	std::vector<float> knotsd = { 0,0,0,1,1,2,3,3,3 };
+	NURBSCurve randomDouble(cpsr, knotsd, 2);
+	nurbsCurves.push_back(randomDouble);
+
 	/*Vec4f tan;
 	std::cout << curve2.evaluteDeBoor(0.1f, tan) << std::endl << tan << std::endl;
 	std::pair<std::vector<Vec4f>, std::vector<Vec4f>> res = curve2.evaluateCurve(11);
@@ -127,6 +161,8 @@ void createCurves()
 	{
 		std::cout << std::get<0>(res)[i] << " tangiert durch " << std::get<1>(res)[i] << std::endl;
 	}*/
+	// angezeigte Objekte
+	activeBezier = activeNURBS = 1337;
 	// ==================================================================================
 	for (auto &n : nurbsCurves)
 		std::cout << n << std::endl;
@@ -168,15 +204,19 @@ void drawObjects()
 {
 	for (unsigned int i = 0; i < bezierCurves.size(); ++i)
 	{
-		renderBezier(bezierCurves[i]);
 		if (i == activeBezier)
+		{
+			renderBezier(bezierCurves[i]);
 			renderBezierEvaluation(bezierCurves[i], evalParameter);
+		}
 	}
 	for (unsigned int i = 0; i < nurbsCurves.size(); ++i)
 	{
-		renderNURBS(nurbsCurves[i]);
 		if (i == activeNURBS)
+		{
+			renderNURBS(nurbsCurves[i]);
 			renderNURBSEvaluation(nurbsCurves[i], evalParameter);
+		}
 	}
 }
 
@@ -228,6 +268,8 @@ void keyPressed(unsigned char key, int x, int y)
 		// ==========================================================================
 	case 'i':
 	case 'I':
+		if (activeBezier == 1337)
+			break;
 		if (evalParameter < 0.99f) {
 			evalParameter += 0.01f;
 			std::cout << "t= ";
@@ -237,7 +279,8 @@ void keyPressed(unsigned char key, int x, int y)
 		break;
 	case 'd':
 	case 'D':
-
+		if (activeBezier == 1337)
+			break;
 		if (evalParameter >= 0.01f) {
 
 			evalParameter -= 0.01f;
@@ -248,6 +291,8 @@ void keyPressed(unsigned char key, int x, int y)
 		break;
 	case 'e':
 	case 'E':
+		if (activeBezier == 1337)
+			break;
 		int a;
 		std::cout << "Bitte geben sie an in wieviele aquidistante Punkte sich die Bezier-Kurve aufteilen soll: ";
 		std::cin >> a;
@@ -256,6 +301,85 @@ void keyPressed(unsigned char key, int x, int y)
 			std::cout << bezierCurves[0].evaluateCurve(a - 1).first[i] << std::endl;
 		}
 		glutPostRedisplay();
+		break;
+	case 'b':
+	case 'B':
+		activeBezier = 0;
+		activeNURBS = 1337;
+		glutPostRedisplay();
+		break;
+	case 'n':
+	case 'N':
+		activeBezier = 1337;
+		activeNURBS = 4;
+		glutPostRedisplay();
+		break;
+	case 'c':
+	case 'C':
+		activeBezier = 1337;
+		activeNURBS = 0;
+		glutPostRedisplay();
+		break;
+	case 'y':
+	case 'Y':
+		activeBezier = 1337;
+		activeNURBS = 1;
+		glutPostRedisplay();
+		break;
+	case 'w':
+	case 'W':
+		if (activeNURBS == 1)
+		{
+			activeNURBS = 2;
+			std::cout << "Weight of middle control point doubled" << std::endl;
+			glutPostRedisplay();
+			break;
+		}
+		if (activeNURBS == 2)
+		{
+			activeNURBS = 3;
+			std::cout << "Weight of middle control point quartered" << std::endl;
+			glutPostRedisplay();
+			break;
+		}
+		if (activeNURBS == 3)
+		{
+			activeNURBS = 1;
+			std::cout << "Weight of middle control point normal" << std::endl;
+			glutPostRedisplay();
+			break;
+		}
+		break;
+	case 'k':
+	case 'K':
+		if (activeNURBS == 4)
+		{
+			activeNURBS = 5;
+			std::cout << "Knot decreased" << std::endl;
+			glutPostRedisplay();
+			break;
+		}
+		if (activeNURBS == 5)
+		{
+			activeNURBS = 6;
+			std::cout << "Knot increased" << std::endl;
+			glutPostRedisplay();
+			break;
+		}
+		if (activeNURBS == 6)
+		{
+			activeNURBS = 7;
+			std::cout << "Knot doubled" << std::endl;
+			glutPostRedisplay();
+			break;
+		}
+		if (activeNURBS == 7)
+		{
+			activeNURBS = 4;
+			std::cout << "Knots equidistant" << std::endl;
+			glutPostRedisplay();
+			break;
+		}
 		break;
 		// ==========================================================================
 	}
@@ -308,9 +432,16 @@ void coutHelp()
 	std::cout << "ESC: exit" << std::endl;
 	std::cout << "H: show this (H)elp file" << std::endl;
 	std::cout << "R: (R)eset view" << std::endl;
-	std::cout << "I: (I)ncrease the value t" << std::endl;
-	std::cout << "D: (D)ecrease the value t" << std::endl;
-	std::cout << "E: (E)valuate aquidistant points" << std::endl;
+	std::cout << "B: show (B)ezier curve" << std::endl;
+	std::cout << "Q: show Rational Bezier curve" << std::endl;
+	std::cout << "I: (I)ncrease the value t (Bezier exclusive)" << std::endl;
+	std::cout << "D: (D)ecrease the value t (Bezier exclusive)" << std::endl;
+	std::cout << "E: (E)valuate aquidistant points (Bezier exclusive)" << std::endl;
+	std::cout << "N: show 'random' (N)URBS curve" << std::endl;
+	std::cout << "K: modify (K)not vector of 'random' NURBS curve" << std::endl;
+	std::cout << "C: show (C)ircle NURBS" << std::endl;
+	std::cout << "Y: show Hyperbel NURBS" << std::endl;
+	std::cout << "W: modify (W)eight of middle control point of Hyperbel NURBS" << std::endl;
 	// TODO: update help text according to your changes
 	// ================================================
 
