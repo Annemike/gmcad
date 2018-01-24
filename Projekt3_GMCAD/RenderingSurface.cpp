@@ -30,26 +30,20 @@ void drawNURBSSurfaceCtrlP(const NURBS_Surface &surface)
 {
 	// TODO: draw control polygon an points (homogenized)
 	// =====================================================
-	
-	glBegin(GL_POINTS);
-	glColor3fv(&surface.controlPoints[0][0].x);
-	for (int i = 0; i < surface.controlPoints.size(); i++) {
-		for (int j = 0; j < surface.controlPoints[i].size(); j++) {
-			glVertex3f(surface.controlPoints[i][j].x/ surface.controlPoints[i][j].w, surface.controlPoints[i][j].y/ surface.controlPoints[i][j].w, surface.controlPoints[i][j].z/ surface.controlPoints[i][j].w);
-		}
-	}
-	
-	glEnd();
-
-	glBegin(GL_LINE_STRIP);
-	glColor3fv(&surface.controlPoints[0][0].y);
-	for (int i = 0; i < surface.controlPoints.size(); i++) {
-		for (int j = 0; j < surface.controlPoints[i].size(); j++) {
-			glVertex3f(surface.controlPoints[i][j].homogenized().x, surface.controlPoints[i][j].homogenized().y, surface.controlPoints[i][j].homogenized().z);
-		}
-	}
-
-	glEnd();
+        NURBSCurve tempCurve = NURBSCurve(surface.controlPoints[0],surface.knotVectorU,surface.degree);
+	for (std::vector<Vec4f> row: surface.controlPoints) {
+            tempCurve = NURBSCurve(row,surface.knotVectorU,surface.degree);
+            drawNURBSCtrlPolygon_H(tempCurve,Vec3f(255.0f,0.0f,0.0f));
+        }
+        std::vector<Vec4f> column = std::vector<Vec4f>();
+        for (int i = 0; i < surface.controlPoints[0].size(); i++) {
+            column.clear();
+            for (int j = 0; j < surface.controlPoints.size(); j++) {
+                column.push_back(surface.controlPoints[j][i]);
+            }
+            tempCurve = NURBSCurve(column,surface.knotVectorV,surface.degree);
+            drawNURBSCtrlPolygon_H(tempCurve,Vec3f(255.0f,0.0f,0.0f));
+        }
 	// =====================================================
 }
 
