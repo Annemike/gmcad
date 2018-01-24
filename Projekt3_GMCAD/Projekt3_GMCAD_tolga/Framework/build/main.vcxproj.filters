@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\tolga\Desktop\Projekt3_GMCAD\Framework\main.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tolga\Desktop\Projekt3_GMCAD\Framework\NURBS_Curve.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tolga\Desktop\Projekt3_GMCAD\Framework\NURBS_Surface.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tolga\Desktop\Projekt3_GMCAD\Framework\RenderingCurve.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tolga\Desktop\Projekt3_GMCAD\Framework\RenderingSurface.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\tolga\Desktop\Projekt3_GMCAD\Framework\main.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\tolga\Desktop\Projekt3_GMCAD\Framework\NURBS_Curve.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\tolga\Desktop\Projekt3_GMCAD\Framework\NURBS_Surface.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\tolga\Desktop\Projekt3_GMCAD\Framework\Vec3.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\tolga\Desktop\Projekt3_GMCAD\Framework\Vec4.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\tolga\Desktop\Projekt3_GMCAD\Framework\RenderingCurve.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\tolga\Desktop\Projekt3_GMCAD\Framework\RenderingSurface.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\tolga\Desktop\Projekt3_GMCAD\Framework\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header">
+      <UniqueIdentifier>{C6F0AA09-6DA9-33B3-829E-90A8E550BCE3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{CF3D4520-17FE-3FC3-8384-CC0FBC47247B}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

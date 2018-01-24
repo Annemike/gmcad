@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\tolga\Desktop\Projekt3_GMCAD\Framework\build\CMakeFiles\a04e71fc585f97891d6ce7184d6a89ea\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{18AF44BF-06AB-3176-8859-8928DDA7D22F}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

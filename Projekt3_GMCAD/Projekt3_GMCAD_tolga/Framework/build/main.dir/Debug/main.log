@@ -1,0 +1,15 @@
+﻿  Building Custom Rule C:/Users/tolga/Desktop/Projekt3_GMCAD/Framework/CMakeLists.txt
+  CMake does not need to re-run because C:/Users/tolga/Desktop/Projekt3_GMCAD/Framework/build/CMakeFiles/generate.stamp is up-to-date.
+  main.cpp
+C:\Users\tolga\Desktop\Projekt3_GMCAD\Framework\main.cpp(162): warning C4018: ">": Konflikt zwischen "signed" und "unsigned"
+  NURBS_Curve.cpp
+C:\Users\tolga\Desktop\Projekt3_GMCAD\Framework\NURBS_Curve.cpp(124): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+  NURBS_Surface.cpp
+C:\Users\tolga\Desktop\Projekt3_GMCAD\Framework\NURBS_Surface.cpp(122): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+C:\Users\tolga\Desktop\Projekt3_GMCAD\Framework\NURBS_Surface.cpp(124): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+  RenderingCurve.cpp
+  RenderingSurface.cpp
+C:\Users\tolga\Desktop\Projekt3_GMCAD\Framework\RenderingSurface.cpp(39): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+C:\Users\tolga\Desktop\Projekt3_GMCAD\Framework\RenderingSurface.cpp(41): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+  Code wird generiert...
+  main.vcxproj -> C:\Users\tolga\Desktop\Projekt3_GMCAD\Framework\build\Debug\main.exe

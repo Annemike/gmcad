@@ -1,0 +1,489 @@
+Index: main.cpp
+===================================================================
+--- main.cpp	(revision 11)
++++ main.cpp	(working copy)
+@@ -69,8 +69,6 @@
+ 	enableEval = 0;
+ 	u = 0.5f;
+ 	v = 0.5f;
+-	nurbsSelect = 0;
+-	nrPoints = 30;
+ }
+ 
+ void initializeGL()
+@@ -108,17 +106,30 @@
+ 
+ void calculatePoints()
+ {
++	// objects (test surface via empty constructor)
++	nurbs = NURBS_Surface();
++	std::cout << nurbs << std::endl;
++	nrPoints = 30;
+ 	points.clear();
++	points.reserve(nrPoints * nrPoints);
+ 	normals.clear();
+-	NURBSs.clear();
+-
+-	// TODO: create two NURBS surfaces with different degrees k >= 2
+-	// calculate the points and their normals
+-	// emplace the resulting nurbs,points and normals into the vectors
+-	// =====================================================
+-
+-
+-	// =====================================================
++	normals.reserve(nrPoints * nrPoints);
++	float div = (float)(nrPoints - 1);
++	for (unsigned int i = 0; i < nrPoints; ++i)
++	{
++		float u = (float)i / div;
++		for (unsigned int j = 0; j < nrPoints; ++j)
++		{
++			float v = (float)j / div;
++			Vec4f tangentU, tangentV;
++			points.push_back(nurbs.evaluteDeBoor(u, v, tangentU, tangentV));
++			tangentU.homogenize();
++			tangentV.homogenize();
++			Vec3f tU = Vec3f(tangentU.x, tangentU.y, tangentU.z);
++			Vec3f tV = Vec3f(tangentV.x, tangentV.y, tangentV.z);
++			normals.push_back((tU ^ tV).normalized());
++		}
++	}
+ }
+ 
+ void reshape(GLint width, GLint height)
+@@ -156,33 +167,17 @@
+ 
+ void drawObjects()
+ {
+-	// draw nurbs surface
++	//TODO:
++	// TODO: draw nurbs surface
+ 	// ========================
+-	if (NURBSs.empty() || nurbsSelect > NURBSs.size() || nurbsSelect < 0)
+-		return;
+-
+-	auto &nurbs = NURBSs[nurbsSelect];
+-	auto &ps = points[nurbsSelect];
+-	auto &ns = normals[nurbsSelect];
+-	
+-
+-	if (ps.size() > 1 && nurbs.controlPoints.size() > 1)
++	if (points.size() > 1 && nurbs.controlPoints.size() > 1)
+ 	{
+ 
+-		if(enableEval > 0)
+-			evaluateNURBSSurface(nurbs,u,v,enableEval == 1);
+-
+-		if(enablePoints && !ps.empty())
+-			drawSurfacePoints(ps);
+-
+-		if(enableNormal && !ps.empty() && !ns.empty())
+-			drawNormals(ps, ns);
+-
+-		if (enableCtrl)
+-			drawNURBSSurfaceCtrlP(nurbs);
+-
+-		if (!ps.empty() && !ns.empty())
+-			drawNURBSSurface(ps, ns, nrPoints, nrPoints, enableSurface, enableWire);
++		if(enableEval > 0)evaluateNURBSSurface(nurbs,u,v,enableEval == 1);
++		if(enablePoints)drawSurfacePoints(points);
++		if(enableNormal)drawNormals(points,normals);
++		if(enableCtrl)drawNURBSSurfaceCtrlP(nurbs);
++		drawNURBSSurface(points, normals, nrPoints, nrPoints, enableSurface, enableWire);
+ 	}
+ 	// ========================
+ }
+@@ -228,6 +223,8 @@
+ 		setDefaults();
+ 		glutPostRedisplay();	// use this whenever 3d data changed to redraw the scene
+ 		break;
++		// TODO: place custom functions on button events here to present your results
++		// ==========================================================================
+ 	case 'l':
+ 	case 'L':
+ 		u = u >= 1.0f ? 1.0f : u + 0.01f;
+@@ -238,13 +235,13 @@
+ 		u = u <= 0.0f ? 0.0f : u - 0.01f;
+ 		glutPostRedisplay();
+ 		break;
+-	case 'o':
+-	case 'O':
++	case 'i':
++	case 'I':
+ 		v = v >= 1.0f ? 1.0f : v + 0.01f;
+ 		glutPostRedisplay();
+ 		break;
+-	case 'i':
+-	case 'I':
++	case 'o':
++	case 'O':
+ 		v = v <= 0.0f ? 0.0f : v - 0.01f;
+ 		glutPostRedisplay();
+ 		break;
+@@ -278,17 +275,7 @@
+ 		enableEval = (enableEval + 1) % 3;
+ 		glutPostRedisplay();
+ 		break;
+-	case 'a':
+-	case 'A':
+-		nurbsSelect = (nurbsSelect + 1) % NURBSs.size();
+-		glutPostRedisplay();
+-		break;
+-
+-	// TODO: place custom functions on button events here to present your results
+-	// ==========================================================================
+-
+-
+-	// ==========================================================================
++		// ==========================================================================
+ 	}
+ }
+ 
+@@ -338,21 +325,10 @@
+ 	std::cout << "====== KEY BINDINGS ======" << std::endl;
+ 	std::cout << "ESC: exit" << std::endl;
+ 	std::cout << "H: show this (H)elp file" << std::endl;
+-
+-	std::cout << "P: toggle surface (P)oints" << std::endl;
+-	std::cout << "N: toggle surface (N)ormals" << std::endl;
+-	std::cout << "W: toggle surface (W)ire mesh" << std::endl;
+-	std::cout << "S: toggle (S)urface " << std::endl;
+-	std::cout << "C: toggle surface (C)ontrol polygon" << std::endl;
+-	std::cout << "E: switch (E)valuation visualization (none,u-first,v-fist)" << std::endl;
+-	std::cout << "A: switch between NURBS surfaces" << std::endl;
+-
+-	std::cout << "I/O: change evalutaion parameter v [0;1]" << std::endl;
+-	std::cout << "K/L: change evalutaion parameter u [0;1]" << std::endl;
++	std::cout << "R: (R)eset view" << std::endl;
+ 	// TODO: update help text according to your changes
+ 	// ================================================
+ 
+-
+ 	// ================================================
+ 	std::cout << "==========================" << std::endl;
+ 	std::cout << std::endl;
+Index: main.h
+===================================================================
+--- main.h	(revision 11)
++++ main.h	(working copy)
+@@ -26,13 +26,12 @@
+ // ===========================================================
+ 
+ // some points used for drawing point & line example
+-std::vector<NURBS_Surface> NURBSs;
++NURBS_Surface nurbs;
+ unsigned int nrPoints;
+-std::vector<std::vector<Vec4f>> points;
+-std::vector<std::vector<Vec3f>> normals;
++std::vector<Vec4f> points;
++std::vector<Vec3f> normals;
+ bool enableNormal, enablePoints, enableWire, enableSurface, enableCtrl;
+ int enableEval;
+-int nurbsSelect;
+ float u, v;
+ 
+ // ===========================================================
+Index: NURBS_Curve.cpp
+===================================================================
+--- NURBS_Curve.cpp	(revision 11)
++++ NURBS_Curve.cpp	(working copy)
+@@ -41,7 +41,7 @@
+ 
+ bool NURBSCurve::insertKnot(const float newKnot)
+ {
+-	// implement knot insertion with de Boor algorithm
++	// TODO: implement knot insertion with de Boor algorithm
+ 	// =====================================================
+ 	// get index k for inserting newKnot
+ 	int k = getIndex(newKnot);
+@@ -73,7 +73,7 @@
+ {
+ 	// create a copy of this NURBS curve
+ 	NURBSCurve tempNURBS(*this);
+-	// use insertKnot to evaluate the curve and its tangent. Take care to NOT modify this NURBS curve. Instead use the temporary copy.
++	// TODO: use insertKnot to evaluate the curve and its tangent. Take care to NOT modify this NURBS curve. Instead use the temporary copy.
+ 	// =====================================================================================================================================
+ 	// determine multiplicity of parameter t in U
+ 	int k;
+@@ -110,7 +110,7 @@
+ 	return tempNURBS.controlPoints[index];
+ 	// =====================================================================================================================================
+ }
+-
++//TODO
+ int NURBSCurve::getIndex(const float u)
+ {
+ 	// abort if no knot vector available
+@@ -125,7 +125,7 @@
+ 	// else return valid index for inserting a knot in interval [u_k, u_k+1)
+ 	return (int)k;
+ }
+-
++//TODO
+ unsigned int NURBSCurve::getMultiplicityAndIndex(const float u, int &k)
+ {
+ 	unsigned int multiplicity = 0;
+Index: NURBS_Surface.cpp
+===================================================================
+--- NURBS_Surface.cpp	(revision 11)
++++ NURBS_Surface.cpp	(working copy)
+@@ -102,22 +102,39 @@
+ Vec4f NURBS_Surface::evaluteDeBoor(const float u, const float v, Vec4f& tangentU, Vec4f& tangentV)
+ {
+ 	Vec4f evaluatedPoint;
+-	if (!isValidNURBS())
+-		return Vec4f();
+-
+ 	// TODO: evaluate the surface by evaluating curves
+ 	// ===============================================
+-
+ 	// evaluate the patch at u in all rows
+-
++	std::vector<Vec4f> curveAtU;
++	curveAtU.reserve(controlPoints.size());
++	for (unsigned int i = 0; i < controlPoints.size(); ++i)
++	{
++		NURBSCurve nurbsCurveU(controlPoints[i], knotVectorU, degree);
++		Vec4f tempTangent;
++		curveAtU.push_back(nurbsCurveU.evaluteDeBoor(u, tempTangent));
++	}
+ 	// evaluate curve-at-u at v
+-
++	NURBSCurve nurbsCurveV(curveAtU, knotVectorV, degree);
++	evaluatedPoint = nurbsCurveV.evaluteDeBoor(v, tangentV);
+ 	// evaluate the patch at v in all columns
+-	
++	std::vector<Vec4f> curveAtV;
++	curveAtV.reserve(controlPoints[0].size());
++	for (unsigned int j = 0; j < controlPoints[0].size(); ++j)
++	{
++		std::vector<Vec4f> controlPointsV;
++		controlPointsV.reserve(controlPoints.size());
++		for (unsigned int i = 0; i < controlPoints.size(); ++i)
++		{
++			controlPointsV.push_back(controlPoints[i][j]);
++		}
++		NURBSCurve nurbsCurveV(controlPointsV, knotVectorV, degree);
++		Vec4f tempTangent;
++		curveAtV.push_back(nurbsCurveV.evaluteDeBoor(v, tempTangent));
++	}
+ 	// evaluate curve-at-v at u
+-
++	NURBSCurve nurbsCurveU(curveAtV, knotVectorU, degree);
++	evaluatedPoint = nurbsCurveU.evaluteDeBoor(u, tangentU);
+ 	// ===============================================
+-
+ 	return evaluatedPoint;
+ }
+ 
+Index: RenderingSurface.cpp
+===================================================================
+--- RenderingSurface.cpp	(revision 11)
++++ RenderingSurface.cpp	(working copy)
+@@ -13,8 +13,16 @@
+ 	// TODO: draw points of the surface
+ 	// note: Vec4f provides a method to homogenize a vector
+ 	// =====================================================
++	glColor3f(0.0f, 1.0f, 1.0f);
++	glBegin(GL_POINTS);
++	for (unsigned int i = 0; i < points.size(); ++i)
++	{
++		Vec4f p = points[i];
++		p.homogenize();
++		glVertex3f(p.x, p.y, p.z);
++	}
++	glEnd();
+ 
+-
+ 	// =====================================================
+ }
+ void drawNormals(const std::vector<Vec4f> &points, const std::vector<Vec3f> &normals)
+@@ -22,8 +30,17 @@
+ 	// TODO: draw normals as lines (homogenized)
+ 	// note: Vec4f provides a method to homogenize a vector
+ 	// =====================================================
++	glColor3f(0.0f, 0.7f, 0.7f);
++	glBegin(GL_LINES);
++	for (unsigned int i = 0; i < normals.size(); ++i)
++	{
++		Vec4f p = points[i];
++		p.homogenize();
++		glVertex3f(p.x, p.y, p.z);
++		glVertex3f(p.x + normals[i].x, p.y + normals[i].y, p.z + normals[i].z);
++	}
++	glEnd();
+ 
+-
+ 	// =====================================================
+ }
+ void drawNURBSSurfaceCtrlP(const NURBS_Surface &surface)
+@@ -30,8 +47,45 @@
+ {
+ 	// TODO: draw control polygon an points (homogenized)
+ 	// =====================================================
++	glDisable(GL_LIGHTING);
++	glColor3f(1.0f, 0.0f, 1.0f);
++	glBegin(GL_POINTS);
++	for (unsigned int i = 0; i < surface.controlPoints.size(); ++i)
++	{
++		for (unsigned int j = 0; j < surface.controlPoints[i].size(); ++j)
++		{
++			Vec4f p = surface.controlPoints[i][j];
++			p.homogenize();
++			glVertex3f(p.x, p.y, p.z);
++		}
++	}
++	glEnd();
++	glColor3f(0.7f, 0.0f, 0.7f);
++	glBegin(GL_LINES);
++	for (unsigned int i = 0; i < surface.controlPoints.size(); ++i)
++	{
++		for (unsigned int j = 0; j < surface.controlPoints[i].size(); ++j)
++		{
++			Vec4f p = surface.controlPoints[i][j];
++			p.homogenize();
++			if (i > 0)
++			{
++				Vec4f pV = surface.controlPoints[i - 1][j];
++				pV.homogenize();
++				glVertex3f(p.x, p.y, p.z);
++				glVertex3f(pV.x, pV.y, pV.z);
++			}
++			if (j > 0)
++			{
++				Vec4f pU = surface.controlPoints[i][j - 1];
++				pU.homogenize();
++				glVertex3f(p.x, p.y, p.z);
++				glVertex3f(pU.x, pU.y, pU.z);
++			}
++		}
++	}
++	glEnd();
+ 
+-
+ 	// =====================================================
+ }
+ 
+@@ -44,8 +98,33 @@
+ 		glColor3f(0.0f,0.0f,1.0f);
+ 		// TODO: draw surface wire mesh
+ 		// =====================================================
++		for (unsigned int i = 1; i < numPointsU; ++i)
++		{
++			for (unsigned int j = 1; j < numPointsV; ++j)
++			{
++				glBegin(GL_LINE_LOOP);
++				unsigned int index;
++				Vec4f& p = points.front();
++				index = j*numPointsU + i;
++				p = points[index];
++				glNormal3f(normals[index].x, normals[index].y, normals[index].z);
++				glVertex3f(p.x / p.w, p.y / p.w, p.z / p.w);
++				index = (j - 1)*numPointsU + i;
++				p = points[index];
++				glNormal3f(normals[index].x, normals[index].y, normals[index].z);
++				glVertex3f(p.x / p.w, p.y / p.w, p.z / p.w);
++				index = (j - 1)*numPointsU + i - 1;
++				p = points[index];
++				glNormal3f(normals[index].x, normals[index].y, normals[index].z);
++				glVertex3f(p.x / p.w, p.y / p.w, p.z / p.w);
++				index = j*numPointsU + i - 1;
++				p = points[index];
++				glNormal3f(normals[index].x, normals[index].y, normals[index].z);
++				glVertex3f(p.x / p.w, p.y / p.w, p.z / p.w);
++				glEnd();
++			}
++		}
+ 
+-
+ 		// =====================================================
+ 
+ 	}
+@@ -56,8 +135,33 @@
+ 		glColor3f(0.99f, 0.99f, 0.99f);
+ 		// TODO: draw surface with quads
+ 		// =====================================================
++		glBegin(GL_QUADS);
++		for (unsigned int i = 1; i < numPointsU; ++i)
++		{
++			for (unsigned int j = 1; j < numPointsV; ++j)
++			{
++				unsigned int index;
++				Vec4f& p = points.front();
++				index = j*numPointsU + i;
++				p = points[index];
++				glNormal3f(normals[index].x, normals[index].y, normals[index].z);
++				glVertex3f(p.x / p.w, p.y / p.w, p.z / p.w);
++				index = (j - 1)*numPointsU + i;
++				p = points[index];
++				glNormal3f(normals[index].x, normals[index].y, normals[index].z);
++				glVertex3f(p.x / p.w, p.y / p.w, p.z / p.w);
++				index = (j - 1)*numPointsU + i - 1;
++				p = points[index];
++				glNormal3f(normals[index].x, normals[index].y, normals[index].z);
++				glVertex3f(p.x / p.w, p.y / p.w, p.z / p.w);
++				index = j*numPointsU + i - 1;
++				p = points[index];
++				glNormal3f(normals[index].x, normals[index].y, normals[index].z);
++				glVertex3f(p.x / p.w, p.y / p.w, p.z / p.w);
++			}
++		}
++		glEnd();
+ 
+-
+ 		// =====================================================
+ 	}
+ }
+@@ -79,7 +183,22 @@
+ 		// 2. then the resulting curve and its control polygon at v in u direction.
+ 		   
+ 		// 3. draw the evaluated surface point
+-
++		std::vector<Vec4f> secondCtrlPoints;
++		Vec4f tangent;
++		for (int i = 0;i < surface.controlPoints.size(); ++i)
++		{
++			auto curve = NURBSCurve(surface.controlPoints[i], surface.knotVectorU, surface.degree);
++			drawNURBSCtrlPolygon_H(curve, colorPolyU);
++			drawNURBS_H(curve, colorCurveU);
++			secondCtrlPoints.push_back(curve.evaluteDeBoor(u, tangent));
++		}
++		auto curve2 = NURBSCurve(secondCtrlPoints, surface.knotVectorV, surface.degree);
++		glBegin(GL_POINTS);
++		glColor3fv(&colorPoint[0]);
++		glVertex3fv(&curve2.evaluteDeBoor(v, tangent).homogenized()[0]);
++		glEnd();
++		drawNURBSCtrlPolygon_H(curve2, colorPolyV);
++		drawNURBS_H(curve2, colorCurveV);
+ 	}
+ 	else
+ 	{
+@@ -88,7 +207,27 @@
+ 		// 2. then the resulting curve and its control polygon at u in v direction.
+ 
+ 		// 3. draw the evaluated surface point
+-
++		std::vector<Vec4f> secondCtrlPoints;
++		Vec4f tangent;
++		for (int j = 0;j < surface.controlPoints.size(); ++j)
++		{
++			std::vector<Vec4f> CtrlPoints;
++			for (int i = 0;i < surface.controlPoints[j].size(); ++i)
++			{
++				CtrlPoints.push_back(surface.controlPoints[i][j]);
++			}
++			auto curve = NURBSCurve(CtrlPoints, surface.knotVectorU, surface.degree);
++			drawNURBSCtrlPolygon_H(curve, colorPolyV);
++			drawNURBS_H(curve, colorCurveV);
++			secondCtrlPoints.push_back(curve.evaluteDeBoor(v, tangent));
++		}
++		auto curve2 = NURBSCurve(secondCtrlPoints, surface.knotVectorV, surface.degree);
++		glBegin(GL_POINTS);
++		glColor3fv(&colorPoint[0]);
++		glVertex3fv(&curve2.evaluteDeBoor(u, tangent).homogenized()[0]);
++		glEnd();
++		drawNURBSCtrlPolygon_H(curve2, colorPolyU);
++		drawNURBS_H(curve2, colorCurveU);
+ 	}
+ 
+ 	// =====================================================
