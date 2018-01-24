@@ -118,8 +118,77 @@ void calculatePoints()
 	// calculate the points and their normals
 	// emplace the resulting NURBS, points and normals into the vectors
 	// =====================================================
+	// Example 1: Hat
 	
+	std::vector<std::vector<Vec4f>> controlPoints1;
 
+	std::vector<Vec4f> pRow1;
+	pRow1.push_back(Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
+	pRow1.push_back(Vec4f(0.0f, 1.0f, 1.0f, 1.0f));
+	pRow1.push_back(Vec4f(0.0f, 2.0f, 1.0f, 1.0f));
+	pRow1.push_back(Vec4f(0.0f, 3.0f, 1.0f, 1.0f));
+	pRow1.push_back(Vec4f(0.0f, 4.0f, 1.0f, 1.0f)* 2.0f);
+	controlPoints1.push_back(pRow1);
+
+	std::vector<Vec4f> pRow2;
+	pRow2.push_back(Vec4f(1.0f, 0.0f, 1.0f, 1.0f));
+	pRow2.push_back(Vec4f(1.0f, 1.0f, 0.0f, 1.0f));
+	pRow2.push_back(Vec4f(1.0f, 2.0f, 0.0f, 1.0f));
+	pRow2.push_back(Vec4f(1.0f, 3.0f, 0.0f, 1.0f));
+	pRow2.push_back(Vec4f(1.0f, 4.0f, 1.0f, 1.0f)* 2.0f);
+	controlPoints1.push_back(pRow2);
+
+	std::vector<Vec4f> pRow3;
+	pRow3.push_back(Vec4f(3.0f, 0.0f, 1.0f, 1.0f));
+	pRow3.push_back(Vec4f(3.0f, 1.0f, 0.0f, 1.0f));
+	pRow3.push_back(Vec4f(3.0f, 2.0f, 3.0f, 1.0f));
+	pRow3.push_back(Vec4f(3.0f, 3.0f, 0.0f, 1.0f));
+	pRow3.push_back(Vec4f(3.0f, 4.0f, 1.0f, 1.0f)* 2.0f);
+	controlPoints1.push_back(pRow3);
+
+	std::vector<Vec4f> pRow4;
+	pRow4.push_back(Vec4f(4.0f, 0.0f, 1.0f, 1.0f));
+	pRow4.push_back(Vec4f(4.0f, 1.0f, 0.0f, 1.0f));
+	pRow4.push_back(Vec4f(4.0f, 2.0f, 0.0f, 1.0f));
+	pRow4.push_back(Vec4f(4.0f, 3.0f, 0.0f, 1.0f));
+	pRow4.push_back(Vec4f(4.0f, 4.0f, 1.0f, 1.0f)* 2.0f);
+	controlPoints1.push_back(pRow4);
+
+	std::vector<Vec4f> pRow5;
+	pRow5.push_back(Vec4f(5.0f, 0.0f, 1.0f, 1.0f));
+	pRow5.push_back(Vec4f(5.0f, 1.0f, 1.0f, 1.0f));
+	pRow5.push_back(Vec4f(5.0f, 2.0f, 1.0f, 1.0f));
+	pRow5.push_back(Vec4f(5.0f, 3.0f, 1.0f, 1.0f));
+	pRow5.push_back(Vec4f(5.0f, 4.0f, 1.0f, 1.0f)* 2.0f);
+	controlPoints1.push_back(pRow5);
+
+	std::vector<float> knotVectorU1;
+	knotVectorU1.push_back(0.0f);
+	knotVectorU1.push_back(0.0f);
+	knotVectorU1.push_back(0.0f);
+	knotVectorU1.push_back(0.0f);
+	knotVectorU1.push_back(0.0f);
+	knotVectorU1.push_back(1.0f);
+	knotVectorU1.push_back(1.0f);
+	knotVectorU1.push_back(1.0f);
+	knotVectorU1.push_back(1.0f);
+	knotVectorU1.push_back(1.0f);
+
+	std::vector<float> knotVectorV1;
+	knotVectorV1.push_back(0.0f);
+	knotVectorV1.push_back(0.0f);
+	knotVectorV1.push_back(0.0f);
+	knotVectorV1.push_back(0.0f);
+	knotVectorV1.push_back(0.0f);
+	knotVectorV1.push_back(1.0f);
+	knotVectorV1.push_back(1.0f);
+	knotVectorV1.push_back(1.0f);
+	knotVectorV1.push_back(1.0f);
+	knotVectorV1.push_back(1.0f);
+
+	unsigned int degreeEx1 = 4;
+	
+	NURBSs.emplace_back(NURBS_Surface(controlPoints1, knotVectorU1, knotVectorV1, degreeEx1));
 	// =====================================================
 
 }
