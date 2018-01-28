@@ -41,11 +41,10 @@ int main(int argc, char** argv)
 	// further initializations
 	setDefaults();
 	calculatePoints();
+        for (NURBS_Surface nurbs : NURBSs) {
+            std::cout << nurbs << std::endl;
+        }
 	initializeGL();
-        Vec4f tanU = Vec4f(0.0f,0.0f,0.0f,1.0f);
-        Vec4f tanV = Vec4f(0.0f,0.0f,0.0f,1.0f);
-        std::cout << NURBSs[0].evaluteDeBoor(0.4f,0.6f,tanU,tanV) << std::endl;
-        std::cout << tanU << std::endl << tanV << std::endl;
 	// activate main loop
 	glutMainLoop();
 	return 0;
@@ -67,6 +66,11 @@ void setDefaults()
 
 	enableCtrl = true;
 	enableEval = 0;
+        enablePoints = false;
+        enableNormals = false;
+        enableSurface = false;
+        enableWire = false;
+        triangles = false;
 	nurbsSelect = 0;
 	nrPoints = 30;
 	u = 0.5f;
@@ -103,15 +107,15 @@ void initializeGL()
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	glEnable(GL_COLOR_MATERIAL);
 	// key bindings => cout
-	coutHelp();
 }
 
 void calculatePoints()
 {
 	NURBSs.clear();
+        points.clear();
+        normals.clear();
 	// objects (test surface via empty constructor)
 	auto nurbs = NURBS_Surface();
-	std::cout << nurbs << std::endl;
 	NURBSs.emplace_back(nurbs);
 
 	// TODO: create two NURBS surfaces with different degrees k >= 2
@@ -188,7 +192,36 @@ void calculatePoints()
 
 	unsigned int degreeEx1 = 4;
 	
-	NURBSs.emplace_back(NURBS_Surface(controlPoints1, knotVectorU1, knotVectorV1, degreeEx1));
+	NURBSs.push_back(NURBS_Surface(controlPoints1, knotVectorU1, knotVectorV1, degreeEx1));
+        
+        std::vector<Vec4f> pointrow = std::vector<Vec4f>();
+        Vec4f point = Vec4f(0.0f,0.0f,0.0f,1.0f);
+        std::vector<Vec3f> normalrow = std::vector<Vec3f>();
+        Vec3f normal = Vec3f(0.0f,0.0f,0.0f);
+        Vec4f tanU = Vec4f(0.0f,0.0f,0.0f,1.0f);
+        Vec4f tanV = Vec4f(0.0f,0.0f,0.0f,1.0f);
+        Vec3f tmpTanU = Vec3f(0.0f,0.0f,0.0f);
+        Vec3f tmpTanV = Vec3f(0.0f,0.0f,0.0f);
+        for (int i = 0; i < NURBSs.size(); i++) {
+            pointrow.clear();
+            normalrow.clear();
+            for (int j = 0; j <= nrPoints; j++) {
+                for (int k = 0; k <= nrPoints; k++) {
+                    point = NURBSs[i].evaluteDeBoor((float)k/nrPoints,(float)j/nrPoints,tanU,tanV);
+                    pointrow.push_back(point);
+                    tanU.homogenize();
+                    tanV.homogenize();
+                    tmpTanU = Vec3f(tanU.x,tanU.y,tanU.z);
+                    tmpTanV = Vec3f(tanV.x,tanV.y,tanV.z);
+                    tmpTanU.normalize();
+                    tmpTanV.normalize();
+                    normal = tmpTanU^tmpTanV;
+                    normalrow.push_back(normal);
+                }
+            }
+            points.push_back(pointrow);
+            normals.push_back(normalrow);
+        }
 	// =====================================================
 
 }
@@ -241,8 +274,13 @@ void drawObjects()
 			drawNURBSSurfaceCtrlP(nurbs);
 		// TODO: draw nurbs surface
 		// ========================
-	
-
+                if (enablePoints) {
+                    drawSurfacePoints(points[nurbsSelect]);
+                }
+                if (enableNormals) {
+                    drawNormals(points[nurbsSelect],normals[nurbsSelect]);
+                }
+                drawNURBSSurface(points[nurbsSelect],normals[nurbsSelect],nrPoints+1,nrPoints+1,enableSurface,enableWire,triangles);
 		// ========================
 	}
 }
@@ -286,6 +324,7 @@ void keyPressed(unsigned char key, int x, int y)
 	case 'r' :
 	case 'R' :
 		setDefaults();
+                calculatePoints();
 		glutPostRedisplay();	// use this whenever 3d data changed to redraw the scene
 		std::cout << "view reset\n";
 		break;
@@ -302,6 +341,7 @@ void keyPressed(unsigned char key, int x, int y)
 		if (enableEval == 0)	std::cout << "Evaluation disabled\n";
 		if (enableEval == 1)	std::cout << "Evaluation enabled ( v first)\n";
 		if (enableEval == 2)	std::cout << "Evaluation enabled ( u first)\n";
+                break;
 	case 'a':
 	case 'A':
 		nurbsSelect = (nurbsSelect + 1) % NURBSs.size();
@@ -309,8 +349,100 @@ void keyPressed(unsigned char key, int x, int y)
 		break;
 		// TODO: place custom functions on button events here to present your results
 		// ==========================================================================
-
-
+        case 'p':
+	case 'P':
+		enablePoints = !enablePoints;
+		glutPostRedisplay();
+		std::cout << "Points: "<< (enablePoints ? "enabled" : "disabled")<<"\n";
+		break;
+        case 'n':
+	case 'N':
+		enableNormals = !enableNormals;
+		glutPostRedisplay();
+		std::cout << "Normals: "<< (enableNormals ? "enabled" : "disabled")<<"\n";
+		break;
+        case 'w':
+	case 'W':
+		if (!enableWire) {
+                    enableWire = true;
+                    triangles = true;
+                }
+                else if (triangles) {
+                    triangles = false;
+                }
+                else {
+                    enableWire = false;
+                }
+		glutPostRedisplay();
+                if (!enableWire) std::cout << "Wire frame: disabled" << std::endl;
+                else {
+                    if (triangles) std::cout << "Wire frame: enabled, triangles" << std::endl;
+                    else std::cout << "Wire frame: enabled, quads" << std::endl;
+                }
+		break;
+        case 's':
+	case 'S':
+                if (!enableSurface) {
+                    enableSurface = true;
+                    triangles = true;
+                }
+                else if (triangles) {
+                    triangles = false;
+                }
+                else {
+                    enableSurface = false;
+                }
+		glutPostRedisplay();
+                if (!enableSurface) std::cout << "Surface: disabled" << std::endl;
+                else {
+                    if (triangles) std::cout << "Surface: enabled, triangles" << std::endl;
+                    else std::cout << "Surface: enabled, quads" << std::endl;
+                }
+		break;
+        case 'i':
+        case 'I':
+                nrPoints++;
+                calculatePoints();
+                glutPostRedisplay();
+                std::cout << "Number of evaluated points in both directions: " << nrPoints+1 << std::endl;
+                break;
+        case 'd':
+        case 'D':
+                if (nrPoints > 1) {
+                    nrPoints--;
+                }
+                calculatePoints();
+                glutPostRedisplay();
+                std::cout << "Number of evaluated points in both directions: " << nrPoints+1 << std::endl;
+                break;
+        case 'u':
+                if (u > 0)
+                    u -= 0.01;
+                if (u < 0)
+                    u = 0;
+                glutPostRedisplay();
+                break;
+        case 'U':
+                if (u < 1)
+                    u += 0.01;
+                if (u > 1)
+                    u = 1;
+                glutPostRedisplay();
+                break;
+        case 'v':
+                if (v > 0)
+                    v -= 0.01;
+                if (v < 0)
+                    v = 0;
+                glutPostRedisplay();
+                break;
+        case 'V':
+                if (v < 1)
+                    v += 0.01;
+                if (v > 1)
+                    v = 1;
+                glutPostRedisplay();
+                break;
 		// ==========================================================================
 	}
 }
@@ -367,8 +499,16 @@ void coutHelp()
 	std::cout << "A: switch between NURBS surfaces" << std::endl;
 	// TODO: update help text according to your changes
 	// ================================================
-
-
+        std::cout << "P: switch (P)oint visualization" << std::endl;
+        std::cout << "N: switch (N)ormal visualization" << std::endl;
+        std::cout << "W: switch (W)ire frame visualization (none, triangles, quads" << std::endl;
+        std::cout << "S: switch (S)urface visualization (none, triangles, quads)" << std::endl;
+        std::cout << "I: (I)ncrease m (number of evaluated Points)" << std::endl;
+        std::cout << "D: (D)ecrease m (number of evaluated Points)" << std::endl;
+        std::cout << "U: Increase u" << std::endl;
+        std::cout << "u: Decrease u" << std::endl;
+        std::cout << "V: Increase v" << std::endl;
+        std::cout << "v: Decrease v" << std::endl;
 	// ================================================
 	std::cout << "==========================" << std::endl;
 	std::cout << std::endl;
