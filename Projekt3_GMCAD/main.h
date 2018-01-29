@@ -39,6 +39,7 @@ bool enableNormals;
 bool enableSurface;
 bool enableWire;
 bool triangles;
+bool nurbsmade;
 // ===========================================================
 
 // do not modify data below unless you know what you do

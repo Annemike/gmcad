@@ -71,6 +71,7 @@ void setDefaults()
         enableSurface = false;
         enableWire = false;
         triangles = false;
+        nurbsmade = false;
 	nurbsSelect = 0;
 	nrPoints = 30;
 	u = 0.5f;
@@ -111,88 +112,181 @@ void initializeGL()
 
 void calculatePoints()
 {
-	NURBSs.clear();
         points.clear();
         normals.clear();
 	// objects (test surface via empty constructor)
-	auto nurbs = NURBS_Surface();
-	NURBSs.emplace_back(nurbs);
+        if (!nurbsmade) {
+            NURBSs.clear();
+            auto nurbs = NURBS_Surface();
+            NURBSs.emplace_back(nurbs);
 
-	// TODO: create two NURBS surfaces with different degrees k >= 2
-	// calculate the points and their normals
-	// emplace the resulting NURBS, points and normals into the vectors
-	// =====================================================
-	// Example 1: Hat
+            // TODO: create two NURBS surfaces with different degrees k >= 2
+            // calculate the points and their normals
+            // emplace the resulting NURBS, points and normals into the vectors
+            // =====================================================
+            // Example 1: Hat
 	
-	std::vector<std::vector<Vec4f>> controlPoints1;
+            std::vector<std::vector<Vec4f>> controlPoints1;
 
-	std::vector<Vec4f> pRow1;
-	pRow1.push_back(Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
-	pRow1.push_back(Vec4f(0.0f, 1.0f, 1.0f, 1.0f));
-	pRow1.push_back(Vec4f(0.0f, 2.0f, 1.0f, 1.0f));
-	pRow1.push_back(Vec4f(0.0f, 3.0f, 1.0f, 1.0f));
-	pRow1.push_back(Vec4f(0.0f, 4.0f, 1.0f, 1.0f)* 2.0f);
-	controlPoints1.push_back(pRow1);
+            std::vector<Vec4f> pRow1;
+            pRow1.push_back(Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
+            pRow1.push_back(Vec4f(0.0f, 1.0f, 1.0f, 1.0f));
+            pRow1.push_back(Vec4f(0.0f, 2.0f, 1.0f, 1.0f));
+            pRow1.push_back(Vec4f(0.0f, 3.0f, 1.0f, 1.0f));
+            pRow1.push_back(Vec4f(0.0f, 4.0f, 1.0f, 1.0f)* 2.0f);
+            controlPoints1.push_back(pRow1);
 
-	std::vector<Vec4f> pRow2;
-	pRow2.push_back(Vec4f(1.0f, 0.0f, 1.0f, 1.0f));
-	pRow2.push_back(Vec4f(1.0f, 1.0f, 0.0f, 1.0f));
-	pRow2.push_back(Vec4f(1.0f, 2.0f, 0.0f, 1.0f));
-	pRow2.push_back(Vec4f(1.0f, 3.0f, 0.0f, 1.0f));
-	pRow2.push_back(Vec4f(1.0f, 4.0f, 1.0f, 1.0f)* 2.0f);
-	controlPoints1.push_back(pRow2);
+            std::vector<Vec4f> pRow2;
+            pRow2.push_back(Vec4f(1.0f, 0.0f, 1.0f, 1.0f));
+            pRow2.push_back(Vec4f(1.0f, 1.0f, 0.0f, 1.0f));
+            pRow2.push_back(Vec4f(1.0f, 2.0f, 0.0f, 1.0f));
+            pRow2.push_back(Vec4f(1.0f, 3.0f, 0.0f, 1.0f));
+            pRow2.push_back(Vec4f(1.0f, 4.0f, 1.0f, 1.0f)* 2.0f);
+            controlPoints1.push_back(pRow2);
 
-	std::vector<Vec4f> pRow3;
-	pRow3.push_back(Vec4f(3.0f, 0.0f, 1.0f, 1.0f));
-	pRow3.push_back(Vec4f(3.0f, 1.0f, 0.0f, 1.0f));
-	pRow3.push_back(Vec4f(3.0f, 2.0f, 3.0f, 1.0f));
-	pRow3.push_back(Vec4f(3.0f, 3.0f, 0.0f, 1.0f));
-	pRow3.push_back(Vec4f(3.0f, 4.0f, 1.0f, 1.0f)* 2.0f);
-	controlPoints1.push_back(pRow3);
+            std::vector<Vec4f> pRow3;
+            pRow3.push_back(Vec4f(3.0f, 0.0f, 1.0f, 1.0f));
+            pRow3.push_back(Vec4f(3.0f, 1.0f, 0.0f, 1.0f));
+            pRow3.push_back(Vec4f(3.0f, 2.0f, 3.0f, 1.0f));
+            pRow3.push_back(Vec4f(3.0f, 3.0f, 0.0f, 1.0f));
+            pRow3.push_back(Vec4f(3.0f, 4.0f, 1.0f, 1.0f)* 2.0f);
+            controlPoints1.push_back(pRow3);
 
-	std::vector<Vec4f> pRow4;
-	pRow4.push_back(Vec4f(4.0f, 0.0f, 1.0f, 1.0f));
-	pRow4.push_back(Vec4f(4.0f, 1.0f, 0.0f, 1.0f));
-	pRow4.push_back(Vec4f(4.0f, 2.0f, 0.0f, 1.0f));
-	pRow4.push_back(Vec4f(4.0f, 3.0f, 0.0f, 1.0f));
-	pRow4.push_back(Vec4f(4.0f, 4.0f, 1.0f, 1.0f)* 2.0f);
-	controlPoints1.push_back(pRow4);
+            std::vector<Vec4f> pRow4;
+            pRow4.push_back(Vec4f(4.0f, 0.0f, 1.0f, 1.0f));
+            pRow4.push_back(Vec4f(4.0f, 1.0f, 0.0f, 1.0f));
+            pRow4.push_back(Vec4f(4.0f, 2.0f, 0.0f, 1.0f));
+            pRow4.push_back(Vec4f(4.0f, 3.0f, 0.0f, 1.0f));
+            pRow4.push_back(Vec4f(4.0f, 4.0f, 1.0f, 1.0f)* 2.0f);
+            controlPoints1.push_back(pRow4);
 
-	std::vector<Vec4f> pRow5;
-	pRow5.push_back(Vec4f(5.0f, 0.0f, 1.0f, 1.0f));
-	pRow5.push_back(Vec4f(5.0f, 1.0f, 1.0f, 1.0f));
-	pRow5.push_back(Vec4f(5.0f, 2.0f, 1.0f, 1.0f));
-	pRow5.push_back(Vec4f(5.0f, 3.0f, 1.0f, 1.0f));
-	pRow5.push_back(Vec4f(5.0f, 4.0f, 1.0f, 1.0f)* 2.0f);
-	controlPoints1.push_back(pRow5);
+            std::vector<Vec4f> pRow5;
+            pRow5.push_back(Vec4f(5.0f, 0.0f, 1.0f, 1.0f));
+            pRow5.push_back(Vec4f(5.0f, 1.0f, 1.0f, 1.0f));
+            pRow5.push_back(Vec4f(5.0f, 2.0f, 1.0f, 1.0f));
+            pRow5.push_back(Vec4f(5.0f, 3.0f, 1.0f, 1.0f));
+            pRow5.push_back(Vec4f(5.0f, 4.0f, 1.0f, 1.0f)* 2.0f);
+            controlPoints1.push_back(pRow5);
 
-	std::vector<float> knotVectorU1;
-	knotVectorU1.push_back(0.0f);
-	knotVectorU1.push_back(0.0f);
-	knotVectorU1.push_back(0.0f);
-	knotVectorU1.push_back(0.0f);
-	knotVectorU1.push_back(0.0f);
-	knotVectorU1.push_back(1.0f);
-	knotVectorU1.push_back(1.0f);
-	knotVectorU1.push_back(1.0f);
-	knotVectorU1.push_back(1.0f);
-	knotVectorU1.push_back(1.0f);
+            std::vector<float> knotVectorU1;
+            knotVectorU1.push_back(0.0f);
+            knotVectorU1.push_back(0.0f);
+            knotVectorU1.push_back(0.0f);
+            knotVectorU1.push_back(0.0f);
+            knotVectorU1.push_back(0.0f);
+            knotVectorU1.push_back(1.0f);
+            knotVectorU1.push_back(1.0f);
+            knotVectorU1.push_back(1.0f);
+            knotVectorU1.push_back(1.0f);
+            knotVectorU1.push_back(1.0f);
 
-	std::vector<float> knotVectorV1;
-	knotVectorV1.push_back(0.0f);
-	knotVectorV1.push_back(0.0f);
-	knotVectorV1.push_back(0.0f);
-	knotVectorV1.push_back(0.0f);
-	knotVectorV1.push_back(0.0f);
-	knotVectorV1.push_back(1.0f);
-	knotVectorV1.push_back(1.0f);
-	knotVectorV1.push_back(1.0f);
-	knotVectorV1.push_back(1.0f);
-	knotVectorV1.push_back(1.0f);
+            std::vector<float> knotVectorV1;
+            knotVectorV1.push_back(0.0f);
+            knotVectorV1.push_back(0.0f);
+            knotVectorV1.push_back(0.0f);
+            knotVectorV1.push_back(0.0f);
+            knotVectorV1.push_back(0.0f);
+            knotVectorV1.push_back(1.0f);
+            knotVectorV1.push_back(1.0f);
+            knotVectorV1.push_back(1.0f);
+            knotVectorV1.push_back(1.0f);
+            knotVectorV1.push_back(1.0f);
 
-	unsigned int degreeEx1 = 4;
+            unsigned int degreeEx1 = 4;
+            
+            NURBSs.push_back(NURBS_Surface(controlPoints1, knotVectorU1, knotVectorV1, degreeEx1));
+        
+            std::vector<std::vector<Vec4f>> controlPoints2;
+
+            std::vector<Vec4f> pRow11;
+            pRow11.push_back(Vec4f(1.0f, 1.0f, 5.0f, 1.0f));
+            pRow11.push_back(Vec4f(0.0f, 2.0f, 4.0f, 1.0f));
+            pRow11.push_back(Vec4f(0.0f, 2.0f, 3.0f, 1.0f));
+            pRow11.push_back(Vec4f(2.0f, 0.0f, 2.0f, 1.0f));
+            pRow11.push_back(Vec4f(2.0f, 0.0f, 1.0f, 1.0f));
+            pRow11.push_back(Vec4f(1.0f, 1.0f, 0.0f, 1.0f)* 2.0f);
+            controlPoints2.push_back(pRow11);
+
+            std::vector<Vec4f> pRow12;
+            pRow12.push_back(Vec4f(1.0f, 3.0f, 5.0f, 1.0f));
+            pRow12.push_back(Vec4f(0.0f, 3.0f, 4.0f, 1.0f));
+            pRow12.push_back(Vec4f(0.0f, 3.0f, 3.0f, 1.0f));
+            pRow12.push_back(Vec4f(2.0f, 3.0f, 2.0f, 1.0f));
+            pRow12.push_back(Vec4f(2.0f, 3.0f, 1.0f, 1.0f));
+            pRow12.push_back(Vec4f(1.0f, 3.0f, 0.0f, 1.0f)* 2.0f);
+            controlPoints2.push_back(pRow12);
+
+            std::vector<Vec4f> pRow13;
+            pRow13.push_back(Vec4f(1.0f, 4.0f, 5.0f, 1.0f));
+            pRow13.push_back(Vec4f(0.0f, 4.0f, 4.0f, 1.0f));
+            pRow13.push_back(Vec4f(0.0f, 4.0f, 3.0f, 1.0f));
+            pRow13.push_back(Vec4f(2.0f, 4.0f, 2.0f, 1.0f));
+            pRow13.push_back(Vec4f(2.0f, 4.0f, 1.0f, 1.0f));
+            pRow13.push_back(Vec4f(1.0f, 4.0f, 0.0f, 1.0f)* 2.0f);
+            controlPoints2.push_back(pRow13);
+
+            std::vector<Vec4f> pRow14;
+            pRow14.push_back(Vec4f(1.0f, 5.0f, 5.0f, 1.0f));
+            pRow14.push_back(Vec4f(0.0f, 5.0f, 4.0f, 1.0f));
+            pRow14.push_back(Vec4f(0.0f, 5.0f, 3.0f, 1.0f));
+            pRow14.push_back(Vec4f(2.0f, 5.0f, 2.0f, 1.0f));
+            pRow14.push_back(Vec4f(2.0f, 5.0f, 1.0f, 1.0f));
+            pRow14.push_back(Vec4f(1.0f, 5.0f, 0.0f, 1.0f)* 2.0f);
+            controlPoints2.push_back(pRow14);
+
+            std::vector<Vec4f> pRow15;
+            pRow15.push_back(Vec4f(1.0f, 6.0f, 5.0f, 1.0f));
+            pRow15.push_back(Vec4f(0.0f, 6.0f, 4.0f, 1.0f));
+            pRow15.push_back(Vec4f(0.0f, 6.0f, 3.0f, 1.0f));
+            pRow15.push_back(Vec4f(2.0f, 6.0f, 2.0f, 1.0f));
+            pRow15.push_back(Vec4f(2.0f, 6.0f, 1.0f, 1.0f));
+            pRow15.push_back(Vec4f(1.0f, 6.0f, 0.0f, 1.0f)* 2.0f);
+            controlPoints2.push_back(pRow15);
+        
+            std::vector<Vec4f> pRow16;
+            pRow16.push_back(Vec4f(1.0f, 8.0f, 5.0f, 1.0f));
+            pRow16.push_back(Vec4f(0.0f, 7.0f, 4.0f, 1.0f));
+            pRow16.push_back(Vec4f(0.0f, 7.0f, 3.0f, 1.0f));
+            pRow16.push_back(Vec4f(2.0f, 9.0f, 2.0f, 1.0f));
+            pRow16.push_back(Vec4f(2.0f, 9.0f, 1.0f, 1.0f));
+            pRow16.push_back(Vec4f(1.0f, 8.0f, 0.0f, 1.0f)* 2.0f);
+            controlPoints2.push_back(pRow16);
+
+            std::vector<float> knotVectorU2;
+            knotVectorU2.push_back(0.0f);
+            knotVectorU2.push_back(0.0f);
+            knotVectorU2.push_back(0.0f);
+            knotVectorU2.push_back(0.0f);
+            knotVectorU2.push_back(0.0f);
+            knotVectorU2.push_back(0.0f);
+            knotVectorU2.push_back(1.0f);
+            knotVectorU2.push_back(1.0f);
+            knotVectorU2.push_back(1.0f);
+            knotVectorU2.push_back(1.0f);
+            knotVectorU2.push_back(1.0f);
+            knotVectorU2.push_back(1.0f);
+
+            std::vector<float> knotVectorV2;
+            knotVectorV2.push_back(0.0f);
+            knotVectorV2.push_back(0.0f);
+            knotVectorV2.push_back(0.0f);
+            knotVectorV2.push_back(0.0f);
+            knotVectorV2.push_back(0.0f);
+            knotVectorV2.push_back(0.0f);
+            knotVectorV2.push_back(1.0f);
+            knotVectorV2.push_back(1.0f);
+            knotVectorV2.push_back(1.0f);
+            knotVectorV2.push_back(1.0f);
+            knotVectorV2.push_back(1.0f);
+            knotVectorV2.push_back(1.0f);
+        
+            unsigned int degreeEx2 = 5;
 	
-	NURBSs.push_back(NURBS_Surface(controlPoints1, knotVectorU1, knotVectorV1, degreeEx1));
+            NURBSs.push_back(NURBS_Surface(controlPoints2, knotVectorU2, knotVectorV2, degreeEx2));
+            
+            nurbsmade = true;
+        }
+        
         
         std::vector<Vec4f> pointrow = std::vector<Vec4f>();
         Vec4f point = Vec4f(0.0f,0.0f,0.0f,1.0f);
